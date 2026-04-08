@@ -9,66 +9,91 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
+    /* PALET WARNA LUNA KEMBALI */
     :root {
-      --bg-color: #f4f6f9; --card-bg: #ffffff; --text-main: #1a1a1a;
-      --text-muted: #666666; --accent: #2c3e50; --border: #e0e0e0;
+      --luna-1: #A7EBF2; --luna-2: #54ACBF; --luna-3: #26658C;
+      --luna-4: #023859; --luna-5: #011C40;
+      --bg-color: #f4f6f9; --card-bg: #ffffff; --text-main: #011C40;
+      --text-muted: #666666; --border: #e0e0e0;
+      --income: #27ae60; --expense: #c0392b;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Atkinson Hyperlegible', sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text-main); padding-bottom: 80px; }
+    body { background-color: var(--bg-color); color: var(--text-main); padding-bottom: 90px; }
     
-    /* Grand Total Area */
-    .grand-total-area { text-align: center; padding: 40px 20px 20px 20px; background: var(--text-main); color: white; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; margin-bottom: 24px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-    .gt-label { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; color: #a0a0a0; margin-bottom: 8px;}
-    .gt-amount { font-size: 2.8rem; font-weight: 700; margin-bottom: 12px; }
-    .gt-sindiran { font-style: italic; font-size: 0.95rem; color: #f39c12; background: rgba(255,255,255,0.1); display: inline-block; padding: 8px 16px; border-radius: 20px; }
+    /* Branding Top Left */
+    .app-logo { position: absolute; top: 16px; left: 20px; font-size: 0.85rem; font-weight: 700; color: var(--luna-1); letter-spacing: 1px; text-transform: uppercase; z-index: 10;}
+    .app-logo span { color: #fff; font-weight: 400; font-size: 0.75rem; display: block; text-transform: none; opacity: 0.8;}
 
-    /* Navigasi */
-    .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--card-bg); display: flex; border-top: 1px solid var(--border); z-index: 100; }
-    .nav-btn { flex: 1; padding: 20px 0; text-align: center; background: none; border: none; font-weight: 700; font-size: 1rem; color: var(--text-muted); cursor: pointer; }
-    .nav-btn.active { color: var(--accent); border-top: 3px solid var(--accent); background-color: #f8f9fa; }
+    /* Grand Total Area (Luna 5) */
+    .grand-total-area { position: relative; text-align: center; padding: 60px 20px 30px 20px; background: var(--luna-5); color: white; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; margin-bottom: 24px; box-shadow: 0 10px 20px rgba(1, 28, 64, 0.15); }
+    .gt-label { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; color: var(--luna-2); margin-bottom: 8px;}
+    .gt-amount { font-size: 2.8rem; font-weight: 700; margin-bottom: 12px; }
+    .gt-sindiran { font-style: italic; font-size: 0.95rem; color: var(--luna-1); background: rgba(255,255,255,0.1); display: inline-block; padding: 8px 16px; border-radius: 20px; }
+
+    /* Navigasi 3 Menu */
+    .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--card-bg); display: flex; border-top: 1px solid var(--border); z-index: 100; box-shadow: 0 -4px 10px rgba(0,0,0,0.05);}
+    .nav-btn { flex: 1; padding: 16px 0; text-align: center; background: none; border: none; font-weight: 700; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: 0.3s;}
+    .nav-btn.active { color: var(--luna-4); border-top: 3px solid var(--luna-3); background-color: #f8fbfc; }
 
     .page { display: none; padding: 0 20px 20px 20px; max-width: 600px; margin: 0 auto; animation: fadeIn 0.3s; }
     .page.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
     /* Nasihat & Tips */
-    .nasihat-box { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 16px; border-left: 4px solid var(--accent); }
+    .nasihat-box { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 16px; border-left: 4px solid var(--luna-3); }
     .nasihat-title { font-size: 0.9rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
-    .nasihat-text { font-style: italic; font-size: 1.05rem; line-height: 1.5; }
-    .tips-btn { width: 100%; background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 24px; }
-    .tips-content { display: none; background: #e8f4f8; padding: 16px; border-radius: 8px; margin-bottom: 24px; }
+    .nasihat-text { font-style: italic; font-size: 1.05rem; line-height: 1.5; color: var(--luna-5);}
+    .tips-btn { width: 100%; background: transparent; border: 1px solid var(--luna-3); color: var(--luna-4); padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 24px; transition: 0.2s;}
+    .tips-btn:hover { background: var(--luna-3); color: white; }
+    .tips-content { display: none; background: #f0f8fa; padding: 16px; border-radius: 8px; margin-bottom: 24px; color: var(--luna-5); border: 1px solid var(--luna-2);}
     .tips-content.show { display: block; }
 
-    /* Cards Akun */
-    .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; margin-top: 24px; border-bottom: 2px solid var(--text-main); display: inline-block; padding-bottom: 4px; }
+    /* Cards Akun Kalem (Luna) */
+    .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; margin-top: 24px; border-bottom: 2px solid var(--luna-4); display: inline-block; padding-bottom: 4px; color: var(--luna-5);}
     .atm-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-    .atm-card { border-radius: 16px; padding: 20px; color: white; box-shadow: 0 6px 12px rgba(0,0,0,0.15); display: flex; flex-direction: column; justify-content: space-between; min-height: 120px; }
-    .atm-bank { font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+    .atm-card { border-radius: 16px; padding: 20px; color: white; box-shadow: 0 6px 12px rgba(1, 28, 64, 0.1); display: flex; flex-direction: column; justify-content: space-between; min-height: 120px; }
+    .atm-bank { font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; color: var(--luna-1);}
     .atm-balance { font-size: 1.3rem; font-weight: 700; margin-top: 16px; }
     
-    /* Warna Specific Akun */
-    .bg-mandiri { background: linear-gradient(135deg, #0d47a1, #1976d2); } /* Biru Gelap */
-    .bg-dana { background: linear-gradient(135deg, #0288d1, #29b6f6); } /* Biru Terang */
-    .bg-cash { background: linear-gradient(135deg, #1b5e20, #388e3c); } /* Ijo Duit */
-    .bg-superbank { background: linear-gradient(135deg, #00c853, #69f0ae); color: #000 !important; } /* Ijo Terang */
+    /* Variasi Biru Luna untuk kartu */
+    .bg-luna-dark { background: linear-gradient(135deg, var(--luna-4), var(--luna-5)); }
+    .bg-luna-mid { background: linear-gradient(135deg, var(--luna-3), var(--luna-4)); }
+    .bg-luna-light { background: linear-gradient(135deg, var(--luna-2), var(--luna-3)); }
     
-    /* Card Khusus Hutang */
-    .hutang-card { background: linear-gradient(135deg, #b71c1c, #e53935); border-radius: 16px; padding: 20px; color: white; margin-bottom: 24px; box-shadow: 0 6px 12px rgba(229,57,53,0.3); }
+    /* Card Hutang Kalem tapi Aksen Merah */
+    .hutang-card { background: linear-gradient(135deg, var(--luna-4), var(--luna-5)); border-radius: 16px; padding: 20px; color: white; margin-bottom: 24px; box-shadow: 0 6px 12px rgba(1, 28, 64, 0.1); }
     .hutang-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .hutang-title { font-weight: 700; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
-    .hutang-sisa { font-size: 1.6rem; font-weight: 700; }
-    .hutang-progress-bg { background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden; }
-    .hutang-progress-fill { background: #fff; height: 100%; width: 0%; transition: width 0.5s; }
+    .hutang-title { font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; color: #ff8a80;}
+    .hutang-sisa { font-size: 1.5rem; font-weight: 700; }
+    .hutang-progress-bg { background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden; }
+    .hutang-progress-fill { background: #ff5252; height: 100%; width: 0%; transition: width 0.5s; }
 
-    /* Chart & Form */
+    /* Forms & Chart */
     .chart-box { background: var(--card-bg); padding: 16px; border-radius: 12px; border: 1px solid var(--border); }
     .form-box { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 16px; }
-    label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 0.9rem; }
-    input, select { width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; outline: none; background: #fafafa; }
-    button.submit-btn { width: 100%; padding: 16px; background: var(--text-main); color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+    label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 0.9rem; color: var(--luna-4);}
+    input, select { width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; outline: none; background: #fafafa; color: var(--luna-5);}
+    input:focus, select:focus { border-color: var(--luna-3); }
+    button.submit-btn { width: 100%; padding: 16px; background: var(--luna-4); color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s;}
+    button.submit-btn:hover { background: var(--luna-5); }
+
+    /* Riwayat Transaksi Styles */
+    .riwayat-summary { display: flex; gap: 10px; margin-bottom: 20px; }
+    .r-box { flex: 1; background: var(--card-bg); padding: 12px; border-radius: 8px; border: 1px solid var(--border); text-align: center;}
+    .r-box span { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 700;}
+    .r-box strong { font-size: 1.1rem; }
+    .t-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; }
+    .t-info h4 { font-size: 1rem; margin-bottom: 4px; color: var(--luna-5);}
+    .t-info p { font-size: 0.8rem; color: var(--text-muted); }
+    .t-amount { font-weight: 700; font-size: 1.1rem; }
+    .in { color: var(--income); }
+    .out { color: var(--expense); }
+    .empty-state { text-align: center; padding: 30px; color: var(--text-muted); font-style: italic; }
   </style>
 </head>
 <body>
+
+  <div class="app-logo">Luna Finance <span>by Umar Taufik</span></div>
 
   <div class="grand-total-area">
     <div class="gt-label">Total Duit Gua</div>
@@ -82,14 +107,13 @@
       <div class="nasihat-title">Nasihat Hari Ini</div>
       <div class="nasihat-text" id="nasihatText">"Memuat nasihat..."</div>
     </div>
-    <button class="tips-btn" onclick="document.getElementById('tipsArea').classList.toggle('show')">Tips Tambah Rejeki</button>
+    <button class="tips-btn" onclick="document.getElementById('tipsArea').classList.toggle('show')">Lihat Jalur Langit (Tips Rejeki)</button>
     <div class="tips-content" id="tipsArea">
       <p>1. Istigfar<br>2. Doa<br>3. Sedekah<br>4. Sholat Dhuha<br>5. Silaturahmi<br>6. Tawakal<br>7. Jujur dalam usaha</p>
     </div>
 
     <h2 class="section-title">Saldo Akun</h2>
-    <div class="atm-container" id="listAkun">
-      </div>
+    <div class="atm-container" id="listAkun"><p>Memuat akun...</p></div>
 
     <div id="areaHutang"></div>
 
@@ -110,7 +134,7 @@
     </div>
   </div>
 
-  <div id="pageTransaksi" class="page">
+  <div id="pageInput" class="page">
     <h2 class="section-title">Catat Transaksi</h2>
     <div class="form-box">
       <form id="formTransaksi">
@@ -118,7 +142,7 @@
         <input type="date" id="tanggal" required>
         
         <label>Pilih Akun Sumber/Tujuan</label>
-        <select id="akunTransaksi" required></select>
+        <select id="akunTransaksi" required><option>Memuat...</option></select>
 
         <label>Jenis Transaksi</label>
         <select id="jenis" required>
@@ -127,7 +151,7 @@
         </select>
         
         <label>Kategori (Terhubung ke Budget)</label>
-        <select id="kategoriTransaksi" required></select>
+        <select id="kategoriTransaksi" required><option>Memuat...</option></select>
 
         <label>Nominal (IDR)</label>
         <input type="number" id="nominal" required>
@@ -135,14 +159,31 @@
         <label>Keterangan</label>
         <input type="text" id="keterangan" required placeholder="Contoh: Makan siang nasi kuning">
         
-        <button type="submit" class="submit-btn" id="btnTransaksi">Simpan Transaksi</button>
+        <button type="submit" class="submit-btn" id="btnTransaksi">Simpan Data</button>
       </form>
     </div>
   </div>
 
+  <div id="pageRiwayat" class="page">
+    <h2 class="section-title">Riwayat Harian</h2>
+    <div class="form-box" style="margin-bottom: 20px;">
+      <label>Pilih Tanggal Untuk Dicek</label>
+      <input type="date" id="filterTanggal" onchange="renderRiwayat()">
+    </div>
+
+    <div class="riwayat-summary">
+      <div class="r-box"><span>Uang Masuk</span><strong class="in" id="rekamMasuk">Rp 0</strong></div>
+      <div class="r-box"><span>Uang Keluar</span><strong class="out" id="rekamKeluar">Rp 0</strong></div>
+    </div>
+
+    <div id="listRiwayat">
+      </div>
+  </div>
+
   <nav class="bottom-nav">
     <button class="nav-btn active" onclick="switchPage('pageDashboard', this)">Dashboard</button>
-    <button class="nav-btn" onclick="switchPage('pageTransaksi', this)">Transaksi</button>
+    <button class="nav-btn" onclick="switchPage('pageInput', this)">Input Data</button>
+    <button class="nav-btn" onclick="switchPage('pageRiwayat', this)">Riwayat</button>
   </nav>
 
   <script>
@@ -151,11 +192,18 @@
 
     const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(Math.abs(angka));
 
-    // Nasihat
-    const nasihat = ["Risiko datang dari tidak tahu apa yang kamu lakukan.", "Tujuan bukan sekadar menghasilkan uang, tapi membuat uang bekerja untukmu.", "Investasi terbaik adalah pada dirimu sendiri."];
+    const nasihat = [
+      "Risiko datang dari tidak tahu apa yang kamu lakukan.", 
+      "Tujuan bukan sekadar menghasilkan uang, tapi membuat uang bekerja untukmu.", 
+      "Investasi terbaik adalah pada dirimu sendiri."
+    ];
     document.getElementById('nasihatText').innerText = nasihat[new Date().getDate() % nasihat.length];
 
-    document.getElementById('tanggal').valueAsDate = new Date();
+    // Set default dates
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('tanggal').value = today;
+    document.getElementById('filterTanggal').value = today;
+
     function switchPage(pageId, btn) {
       document.querySelectorAll('.page, .nav-btn').forEach(el => el.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
@@ -163,23 +211,22 @@
     }
 
     let myChart = null;
+    let globalDataTransaksi = []; // Simpan transaksi untuk fitur history harian
 
     async function muatData() {
       try {
         const res = await fetch(SCRIPT_URL);
         const data = await res.json();
+        globalDataTransaksi = data.transaksi;
         prosesKalkulasi(data.akun, data.transaksi, data.budget);
+        renderRiwayat(); // Render riwayat hari ini
       } catch (error) { console.error(error); }
     }
 
     function prosesKalkulasi(dataAkun, dataTransaksi, dataBudget) {
-      // 1. Kalkulasi Saldo Akun Nyata
       let saldoAktual = {};
-      for (let i = 1; i < dataAkun.length; i++) {
-        saldoAktual[dataAkun[i][1]] = Number(dataAkun[i][2]); // Saldo awal
-      }
+      for (let i = 1; i < dataAkun.length; i++) saldoAktual[dataAkun[i][1]] = Number(dataAkun[i][2]);
 
-      // 2. Kalkulasi Pemakaian Budget (Bulan Ini)
       let budgetTerpakai = {};
       const blnSkrg = new Date().getMonth();
       const thnSkrg = new Date().getFullYear();
@@ -191,29 +238,27 @@
         const kategori = dataTransaksi[i][4];
         const akun = dataTransaksi[i][5];
 
-        // Update Saldo Akun (Semua Waktu)
         if (saldoAktual[akun] !== undefined) {
           if (jenis === 'Pemasukan') saldoAktual[akun] += nominal;
           if (jenis === 'Pengeluaran') saldoAktual[akun] -= nominal;
         }
 
-        // Update Terpakai Budget (Hanya bulan ini)
         if (jenis === 'Pengeluaran' && tgl.getMonth() === blnSkrg && tgl.getFullYear() === thnSkrg) {
           budgetTerpakai[kategori] = (budgetTerpakai[kategori] || 0) + nominal;
         }
       }
 
-      // RENDER UI AKUN & GRAND TOTAL
       let totalDuit = 0;
       let htmlAkun = '';
       let htmlOptionAkun = '';
       
+      const lunaClasses = ['bg-luna-dark', 'bg-luna-mid', 'bg-luna-light'];
+      let idx = 0;
+
       for (const [nama, saldo] of Object.entries(saldoAktual)) {
         totalDuit += saldo;
-        let kelasWarna = "bg-mandiri"; // default
-        if(nama.toLowerCase().includes("dana")) kelasWarna = "bg-dana";
-        if(nama.toLowerCase().includes("cash")) kelasWarna = "bg-cash";
-        if(nama.toLowerCase().includes("super")) kelasWarna = "bg-superbank";
+        let kelasWarna = lunaClasses[idx % 3];
+        idx++;
 
         htmlAkun += `
           <div class="atm-card ${kelasWarna}">
@@ -226,12 +271,7 @@
       document.getElementById('listAkun').innerHTML = htmlAkun;
       document.getElementById('akunTransaksi').innerHTML = htmlOptionAkun;
 
-      // RENDER UI BUDGET & HUTANG
-      let labelBudget = [];
-      let dataTerpakai = [];
-      let dataSisa = [];
-      let warnaTerpakai = [];
-      let htmlOptionKat = '';
+      let labelBudget = [], dataTerpakai = [], dataSisa = [], warnaTerpakai = [], htmlOptionKat = '';
 
       for (let i = 1; i < dataBudget.length; i++) {
         const namaKat = dataBudget[i][1];
@@ -240,41 +280,32 @@
         
         htmlOptionKat += `<option value="${namaKat}">${namaKat}</option>`;
 
-        // Deteksi Hutang (Kategori Spesial)
         if (namaKat.toLowerCase().includes('hutang')) {
           const persentase = limit > 0 ? (terpakai / limit) * 100 : 0;
-          const sisaHutang = limit - terpakai;
           document.getElementById('areaHutang').innerHTML = `
             <div class="hutang-card">
               <div class="hutang-header">
                 <div class="hutang-title">Target Bayar Hutang</div>
-                <div class="hutang-sisa">${formatRp(sisaHutang)} lagi</div>
+                <div class="hutang-sisa">${formatRp(limit - terpakai)}</div>
               </div>
               <div class="hutang-progress-bg">
                 <div class="hutang-progress-fill" style="width: ${persentase > 100 ? 100 : persentase}%"></div>
               </div>
-              <div style="font-size: 0.8rem; margin-top: 8px;">Sudah dibayar: ${formatRp(terpakai)}</div>
             </div>`;
-          continue; // Skip dari chart utama
+          continue; 
         }
 
-        // Untuk Chart Budget Normal
         labelBudget.push(namaKat);
-        let sisa = limit - terpakai;
-        if (sisa < 0) sisa = 0; // Gak bisa minus di chart
-        
         dataTerpakai.push(terpakai);
-        dataSisa.push(sisa);
+        dataSisa.push(limit - terpakai < 0 ? 0 : limit - terpakai);
 
-        // Warna peringatan jika terpakai > 80%
-        if (terpakai >= limit) warnaTerpakai.push('#c0392b'); // Merah bahaya
-        else if (terpakai >= limit * 0.8) warnaTerpakai.push('#f39c12'); // Oranye peringatan
-        else warnaTerpakai.push('#2c3e50'); // Biru gelap aman
+        if (terpakai >= limit) warnaTerpakai.push('#c0392b'); // Bahaya
+        else if (terpakai >= limit * 0.8) warnaTerpakai.push('#f39c12'); // Waspada
+        else warnaTerpakai.push('#023859'); // Aman (Luna-4)
       }
 
       document.getElementById('kategoriTransaksi').innerHTML = htmlOptionKat;
 
-      // GAMBAR CHART
       const ctx = document.getElementById('budgetChart').getContext('2d');
       if(myChart) myChart.destroy();
       myChart = new Chart(ctx, {
@@ -283,18 +314,61 @@
           labels: labelBudget,
           datasets: [
             { label: 'Terpakai', data: dataTerpakai, backgroundColor: warnaTerpakai, borderRadius: 4 },
-            { label: 'Sisa Limit', data: dataSisa, backgroundColor: '#e0e0e0', borderRadius: 4 }
+            { label: 'Sisa Limit', data: dataSisa, backgroundColor: '#A7EBF2', borderRadius: 4 } // Luna-1
           ]
         },
-        options: {
-          responsive: true,
-          plugins: { legend: { position: 'bottom' } },
-          scales: {
-            x: { stacked: true },
-            y: { stacked: true, beginAtZero: true }
-          }
-        }
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } } }
       });
+    }
+
+    // --- FITUR RIWAYAT HARIAN (Kalo Gua Jago) ---
+    function renderRiwayat() {
+      const selectedDate = document.getElementById('filterTanggal').value;
+      let htmlList = '';
+      let hariMasuk = 0;
+      let hariKeluar = 0;
+
+      // Loop dari belakang agar yang terbaru di atas
+      for (let i = globalDataTransaksi.length - 1; i >= 1; i--) {
+        const row = globalDataTransaksi[i];
+        const tglData = new Date(row[1]);
+        
+        // Convert tanggal data ke YYYY-MM-DD local untuk dicocokkan
+        const tglStr = tglData.getFullYear() + "-" + String(tglData.getMonth() + 1).padStart(2, '0') + "-" + String(tglData.getDate()).padStart(2, '0');
+        
+        if (tglStr === selectedDate) {
+          const jenis = row[2];
+          const nominal = Number(row[3]);
+          const kategori = row[4];
+          const akun = row[5];
+          const ket = row[6];
+          
+          if (jenis === 'Pemasukan') hariMasuk += nominal;
+          else hariKeluar += nominal;
+
+          const isIncome = jenis === 'Pemasukan';
+          htmlList += `
+            <div class="t-item">
+              <div class="t-info">
+                <h4>${ket}</h4>
+                <p>${akun} • ${kategori}</p>
+              </div>
+              <div class="t-amount ${isIncome ? 'in' : 'out'}">
+                ${isIncome ? '+' : '-'} ${formatRp(nominal)}
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      document.getElementById('rekamMasuk').innerText = formatRp(hariMasuk);
+      document.getElementById('rekamKeluar').innerText = formatRp(hariKeluar);
+      
+      if(htmlList === '') {
+        document.getElementById('listRiwayat').innerHTML = '<div class="empty-state">Belum ada transaksi di tanggal ini bro.</div>';
+      } else {
+        document.getElementById('listRiwayat').innerHTML = htmlList;
+      }
     }
 
     async function submitForm(formId, btnId, payload) {
@@ -303,10 +377,16 @@
       btn.innerText = 'Menyimpan...'; btn.disabled = true;
       try {
         await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-        document.getElementById(formId).reset();
-        if(formId==='formTransaksi') document.getElementById('tanggal').valueAsDate = new Date();
+        if(formId==='formTransaksi') {
+          document.getElementById('nominal').value = '';
+          document.getElementById('keterangan').value = '';
+          // Jangan reset tanggal, biar user enak kalau mau input banyak di tanggal yg sama
+        } else {
+          document.getElementById(formId).reset();
+        }
         muatData();
-        switchPage('pageDashboard', document.querySelector('.nav-btn'));
+        alert("Berhasil dicatat!");
+        switchPage('pageDashboard', document.querySelectorAll('.nav-btn')[0]); // Pindah ke dashboard habis input
       } catch (e) { alert("Gagal nyimpen data bro!"); } 
       finally { btn.innerText = txt; btn.disabled = false; }
     }
@@ -314,13 +394,7 @@
     document.getElementById('formTransaksi').addEventListener('submit', e => {
       e.preventDefault();
       submitForm('formTransaksi', 'btnTransaksi', {
-        action: 'tambahTransaksi',
-        tanggal: document.getElementById('tanggal').value,
-        akun: document.getElementById('akunTransaksi').value,
-        jenis: document.getElementById('jenis').value,
-        kategori: document.getElementById('kategoriTransaksi').value,
-        nominal: document.getElementById('nominal').value,
-        keterangan: document.getElementById('keterangan').value
+        action: 'tambahTransaksi', tanggal: document.getElementById('tanggal').value, akun: document.getElementById('akunTransaksi').value, jenis: document.getElementById('jenis').value, kategori: document.getElementById('kategoriTransaksi').value, nominal: document.getElementById('nominal').value, keterangan: document.getElementById('keterangan').value
       });
     });
 
