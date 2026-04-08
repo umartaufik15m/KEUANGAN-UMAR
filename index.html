@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Luna Finance</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --luna-1: #A7EBF2;
+      --luna-2: #54ACBF;
+      --luna-3: #26658C;
+      --luna-4: #023859;
+      --luna-5: #011C40;
+      --text-light: #e2f1f8;
+      --text-muted: #88a4b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--luna-5);
+      color: var(--text-light);
+      padding: 20px 20px 80px 20px; /* Padding bawah untuk bottom nav */
+    }
+
+    /* Header Profile */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .user-greeting {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      background-color: var(--luna-3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: var(--luna-1);
+    }
+
+    /* Card Saldo */
+    .balance-card {
+      background: linear-gradient(135deg, var(--luna-2), var(--luna-3));
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .balance-label {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 8px;
+    }
+
+    .balance-amount {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .balance-card::after {
+      content: '';
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      top: -50px;
+      right: -50px;
+    }
+
+    /* Card Grafik */
+    .chart-container {
+      background-color: var(--luna-4);
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 16px;
+      color: var(--text-light);
+    }
+
+    /* Transaksi Terakhir */
+    .transaction-list {
+      background-color: var(--luna-4);
+      border-radius: 20px;
+      padding: 16px;
+    }
+
+    .transaction-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .transaction-item:last-child {
+      border-bottom: none;
+    }
+
+    .t-info h4 {
+      font-size: 0.95rem;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .t-info p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .t-amount {
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+
+    .income { color: var(--luna-1); }
+    .expense { color: #ff8a80; } /* Warna aksen merah lembut untuk pengeluaran */
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: var(--luna-4);
+      display: flex;
+      justify-content: space-around;
+      padding: 16px 0;
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-item {
+      color: var(--text-muted);
+      text-align: center;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
+    .nav-item.active {
+      color: var(--luna-1);
+    }
+
+    .nav-icon {
+      font-size: 1.2rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="user-greeting">Overview</div>
+    <div class="user-avatar">U</div>
+  </div>
+
+  <div class="balance-card">
+    <div class="balance-label">Total saldo cash</div>
+    <div class="balance-amount">Rp 12.450.000</div>
+  </div>
+
+  <div class="chart-container">
+    <div class="section-title">Statistik bulanan</div>
+    <canvas id="balanceChart" height="200"></canvas>
+  </div>
+
+  <div class="transaction-list">
+    <div class="section-title">Transaksi terbaru</div>
+    
+    <div class="transaction-item">
+      <div class="t-info">
+        <h4>Belanja bahan</h4>
+        <p>08 Apr • Operasional</p>
+      </div>
+      <div class="t-amount expense">- Rp 450.000</div>
+    </div>
+
+    <div class="transaction-item">
+      <div class="t-info">
+        <h4>Penjualan harian</h4>
+        <p>07 Apr • Pemasukan</p>
+      </div>
+      <div class="t-amount income">+ Rp 1.200.000</div>
+    </div>
+
+    <div class="transaction-item">
+      <div class="t-info">
+        <h4>Listrik & Air</h4>
+        <p>05 Apr • Utilitas</p>
+      </div>
+      <div class="t-amount expense">- Rp 300.000</div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item active">
+      <span class="nav-icon">📊</span>
+      Beranda
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">💳</span>
+      Kartu
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">➕</span>
+      Tambah
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">⚙️</span>
+      Pengaturan
+    </div>
+  </div>
+
+  <script>
+    // Konfigurasi Chart.js
+    const ctx = document.getElementById('balanceChart').getContext('2d');
+    
+    // Gradient untuk area di bawah garis
+    let gradient = ctx.createLinearGradient(0, 0, 0, 200);
+    gradient.addColorStop(0, 'rgba(84, 172, 191, 0.4)'); // Luna-2 transparan
+    gradient.addColorStop(1, 'rgba(84, 172, 191, 0)');
+
+    const balanceChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
+        datasets: [{
+          label: 'Saldo',
+          data: [5000, 7000, 6500, 9000, 8500, 12450],
+          borderColor: '#A7EBF2', // Luna-1
+          backgroundColor: gradient,
+          borderWidth: 2,
+          pointBackgroundColor: '#A7EBF2',
+          pointBorderColor: '#011C40',
+          pointBorderWidth: 2,
+          pointRadius: 4,
+          fill: true,
+          tension: 0.4 // Membuat garis melengkung halus
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          x: {
+            grid: { display: false, drawBorder: false },
+            ticks: { color: '#88a4b8', font: { size: 10 } }
+          },
+          y: {
+            grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
+            ticks: { display: false } // Menyembunyikan angka di sumbu Y agar bersih
+          }
+        }
+      }
+    });
+
+    // TEMPAT UNTUK FUNGSI FETCH KE GOOGLE APPS SCRIPT NANTINYA
+    // function ambilDataDariSheet() { ... }
+    // function kirimDataKeSheet() { ... }
+  </script>
+</body>
+</html>
