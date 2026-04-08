@@ -3,380 +3,412 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Luna Finance</title>
+  <title>Keuangan Pribadi</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+  
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
     :root {
-      --luna-1: #A7EBF2;
-      --luna-2: #54ACBF;
-      --luna-3: #26658C;
-      --luna-4: #023859;
-      --luna-5: #011C40;
-      --text-light: #e2f1f8;
-      --text-muted: #88a4b8;
+      --bg-color: #f4f6f9;
+      --card-bg: #ffffff;
+      --text-main: #1a1a1a;
+      --text-muted: #666666;
+      --accent: #2c3e50;
+      --border: #e0e0e0;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: 'Atkinson Hyperlegible', sans-serif;
     }
 
     body {
-      background-color: var(--luna-5);
-      color: var(--text-light);
-      padding: 20px 20px 80px 20px;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      padding-bottom: 80px;
     }
 
-    /* Tampilan per Section */
-    .section {
-      display: none;
-      animation: fadeIn 0.3s ease;
-    }
-    .section.active {
-      display: block;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    /* Tipografi Dasar */
+    h1, h2, h3, h4, .text-capitalize {
+      text-transform: capitalize;
     }
 
-    /* --- HEADER --- */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-    }
-    .user-greeting { font-size: 1.2rem; font-weight: bold; }
-    .user-avatar {
-      width: 40px; height: 40px;
-      background-color: var(--luna-3); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: bold; color: var(--luna-1);
-    }
-
-    /* --- DASHBOARD ELEMENTS --- */
-    .balance-card {
-      background: linear-gradient(135deg, var(--luna-2), var(--luna-3));
-      border-radius: 20px; padding: 24px;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-      margin-bottom: 24px; position: relative; overflow: hidden;
-    }
-    .balance-label { font-size: 0.9rem; color: rgba(255, 255, 255, 0.8); margin-bottom: 8px; }
-    .balance-amount { font-size: 2rem; font-weight: bold; color: #fff; }
-    .balance-card::after {
-      content: ''; position: absolute; width: 150px; height: 150px;
-      background: rgba(255, 255, 255, 0.1); border-radius: 50%;
-      top: -50px; right: -50px;
-    }
-
-    .chart-container {
-      background-color: var(--luna-4); border-radius: 20px;
-      padding: 16px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-    .section-title { font-size: 1.1rem; font-weight: 500; margin-bottom: 16px; color: var(--text-light); }
-
-    .transaction-list {
-      background-color: var(--luna-4); border-radius: 20px; padding: 16px;
-    }
-    .transaction-item {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    .transaction-item:last-child { border-bottom: none; }
-    .t-info h4 { font-size: 0.95rem; font-weight: 500; margin-bottom: 4px; }
-    .t-info p { font-size: 0.8rem; color: var(--text-muted); }
-    .t-amount { font-weight: bold; font-size: 0.95rem; }
-    .income { color: var(--luna-1); }
-    .expense { color: #ff8a80; }
-    .loading-text { text-align: center; color: var(--text-muted); padding: 20px 0; font-size: 0.9rem; }
-
-    /* --- FORM ELEMENTS (Dark Mode) --- */
-    .form-card {
-      background-color: var(--luna-4); border-radius: 20px;
-      padding: 24px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-    .form-group { margin-bottom: 16px; }
-    label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--luna-1); font-weight: bold; }
-    input, select {
-      width: 100%; padding: 14px;
-      background-color: var(--luna-5); color: var(--text-light);
-      border: 1px solid var(--luna-3); border-radius: 12px;
-      font-size: 1rem; outline: none; transition: border 0.3s;
-    }
-    input:focus, select:focus { border-color: var(--luna-1); }
-    button.btn-primary {
-      width: 100%; background-color: var(--luna-2); color: var(--luna-5);
-      border: none; padding: 16px; border-radius: 12px;
-      font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px;
-    }
-    button.btn-primary:active { background-color: var(--luna-1); }
-    #pesanAlert {
-      display: none; background-color: var(--luna-1); color: var(--luna-5);
-      padding: 15px; border-radius: 12px; margin-bottom: 20px; text-align: center; font-weight: bold;
-    }
-
-    /* --- BOTTOM NAV --- */
+    /* Navigasi Bawah (Text Only) */
     .bottom-nav {
-      position: fixed; bottom: 0; left: 0; width: 100%;
-      background-color: var(--luna-4); display: flex; justify-content: space-around;
-      padding: 16px 0; border-top-left-radius: 24px; border-top-right-radius: 24px;
-      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2); z-index: 10;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: var(--card-bg);
+      display: flex;
+      border-top: 1px solid var(--border);
+      z-index: 100;
     }
-    .nav-item { color: var(--text-muted); text-align: center; font-size: 0.8rem; cursor: pointer; transition: 0.3s;}
-    .nav-item.active { color: var(--luna-1); transform: translateY(-3px);}
-    .nav-icon { font-size: 1.2rem; display: block; margin-bottom: 4px; }
+    .nav-btn {
+      flex: 1;
+      padding: 20px 0;
+      text-align: center;
+      background: none;
+      border: none;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .nav-btn.active {
+      color: var(--accent);
+      border-top: 3px solid var(--accent);
+      background-color: #f8f9fa;
+    }
+
+    /* Container Halaman */
+    .page {
+      display: none;
+      padding: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+      animation: fadeIn 0.3s;
+    }
+    .page.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* Slider Motivasi */
+    .quote-container {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .quote-slide {
+      display: none;
+      font-style: italic;
+      color: var(--accent);
+      font-size: 1.1rem;
+      line-height: 1.4;
+    }
+    .quote-slide.active { display: block; animation: slideIn 0.5s ease; }
+    .quote-author {
+      font-weight: 700;
+      font-style: normal;
+      display: block;
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    @keyframes slideIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    /* Section Headers */
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      margin-top: 24px;
+      border-bottom: 2px solid var(--text-main);
+      display: inline-block;
+      padding-bottom: 4px;
+    }
+
+    /* Kartu ATM (Akun) */
+    .atm-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .atm-card {
+      border-radius: 16px;
+      padding: 24px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    /* Warna berbeda untuk tiap kartu */
+    .atm-card:nth-child(1) { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); }
+    .atm-card:nth-child(2) { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); }
+    .atm-card:nth-child(3) { background: linear-gradient(135deg, #373b44, #4286f4); }
+    .atm-card:nth-child(n+4) { background: linear-gradient(135deg, #4b6cb7, #182848); }
+    
+    .atm-bank { font-weight: 700; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px;}
+    .atm-balance { font-size: 1.8rem; font-weight: 700; }
+    .atm-label { font-size: 0.8rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+
+    /* Forms */
+    .form-box {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 0.9rem; }
+    input, select {
+      width: 100%; padding: 12px; margin-bottom: 16px;
+      border: 1px solid var(--border); border-radius: 8px;
+      font-size: 1rem; outline: none; background: #fafafa;
+    }
+    input:focus, select:focus { border-color: var(--accent); background: #fff;}
+    button.submit-btn {
+      width: 100%; padding: 16px;
+      background: var(--text-main); color: #fff;
+      border: none; border-radius: 8px; font-weight: 700; font-size: 1rem;
+      cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
+    }
+    button.submit-btn:hover { background: var(--accent); }
+
+    /* Chart Container */
+    .chart-box {
+      background: var(--card-bg);
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
   </style>
 </head>
 <body>
 
-  <div id="beranda" class="section active">
-    <div class="header">
-      <div class="user-greeting">Overview</div>
-      <div class="user-avatar">L</div>
-    </div>
-
-    <div class="balance-card">
-      <div class="balance-label">Total saldo cash</div>
-      <div class="balance-amount" id="totalSaldo">Rp ...</div>
-    </div>
-
-    <div class="chart-container">
-      <div class="section-title">Statistik bulanan</div>
-      <canvas id="balanceChart" height="200"></canvas>
-    </div>
-
-    <div class="transaction-list">
-      <div class="section-title">Transaksi terbaru</div>
-      <div id="listTransaksi">
-        <div class="loading-text">⏳ Mengambil data dari Google Sheets...</div>
-      </div>
-    </div>
-  </div>
-
-  <div id="tambah" class="section">
-    <div class="header">
-      <div class="user-greeting">Catat Transaksi</div>
-    </div>
+  <div id="pageDashboard" class="page active">
     
-    <div id="pesanAlert"></div>
+    <div class="quote-container">
+      <div class="quote-slide active">"Risiko datang dari tidak tahu apa yang kamu lakukan."<span class="quote-author">Warren Buffett</span></div>
+      <div class="quote-slide">"Tujuan bukan sekadar menghasilkan uang, tapi membuat uang bekerja untukmu."<span class="quote-author">Robert Kiyosaki</span></div>
+      <div class="quote-slide">"Investasi terbaik adalah pada dirimu sendiri."<span class="quote-author">Benjamin Franklin</span></div>
+      <div class="quote-slide">"Risiko datang dari tidak tahu apa yang kamu lakukan."<span class="quote-author">Warren Buffett</span></div>
+      <div class="quote-slide">"Tujuan bukan sekadar menghasilkan uang, tapi membuat uang bekerja untukmu."<span class="quote-author">Robert Kiyosaki</span></div>
+      <div class="quote-slide">"Investasi terbaik adalah pada dirimu sendiri."<span class="quote-author">Benjamin Franklin</span></div>
+    </div>
 
-    <div class="form-card">
-      <form id="formTransaksi">
-        <div class="form-group">
-          <label>Tanggal</label>
-          <input type="date" id="tanggal" name="tanggal" required>
-        </div>
-        <div class="form-group">
-          <label>Jenis transaksi</label>
-          <select id="jenis" name="jenis" required>
-            <option value="Pengeluaran">Pengeluaran</option>
-            <option value="Pemasukan">Pemasukan</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Nominal (Rp)</label>
-          <input type="number" id="nominal" name="nominal" placeholder="Contoh: 50000" required>
-        </div>
-        <div class="form-group">
-          <label>Kategori</label>
-          <select id="kategori" name="kategori" required>
-            <option value="Makan & Minum">Makan & Minum</option>
-            <option value="Transportasi">Transportasi</option>
-            <option value="Belanja operasional">Belanja Operasional</option>
-            <option value="Pemasukan / Penjualan">Pemasukan / Penjualan</option>
-            <option value="Lainnya">Lainnya</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Keterangan / Catatan</label>
-          <input type="text" id="keterangan" name="keterangan" placeholder="Contoh: Beli token listrik" required>
-        </div>
-        <button type="submit" class="btn-primary" id="btnSubmit">Simpan Transaksi</button>
+    <h2 class="section-title">Analisis Anggaran</h2>
+    <div class="chart-box">
+      <canvas id="budgetChart"></canvas>
+    </div>
+
+    <h2 class="section-title">Tambah Anggaran Baru</h2>
+    <div class="form-box">
+      <form id="formBudget">
+        <label>Nama Kategori Anggaran</label>
+        <input type="text" id="namaBudget" required placeholder="Contoh: Belanja Bulanan">
+        <label>Nominal (IDR)</label>
+        <input type="number" id="nominalBudget" required placeholder="Contoh: 1500000">
+        <button type="submit" class="submit-btn" id="btnBudget">Tambahkan Anggaran</button>
+      </form>
+    </div>
+
+    <h2 class="section-title">Saldo Akun</h2>
+    <div class="atm-container" id="listAkun">
+      </div>
+
+    <h2 class="section-title">Tambah Akun Baru</h2>
+    <div class="form-box">
+      <form id="formAkun">
+        <label>Nama Akun / Platform</label>
+        <input type="text" id="namaAkun" required placeholder="Contoh: GoPay">
+        <label>Saldo Awal (IDR)</label>
+        <input type="number" id="saldoAkun" required placeholder="Contoh: 50000">
+        <button type="submit" class="submit-btn" id="btnAkun">Tambahkan Akun</button>
       </form>
     </div>
   </div>
 
-  <div class="bottom-nav">
-    <div class="nav-item active" onclick="pindahTab('beranda', this)">
-      <span class="nav-icon">📊</span>
-      Beranda
-    </div>
-    <div class="nav-item" onclick="pindahTab('tambah', this)">
-      <span class="nav-icon">➕</span>
-      Tambah
+  <div id="pageTransaksi" class="page">
+    <h2 class="section-title">Catat Transaksi</h2>
+    <div class="form-box">
+      <form id="formTransaksi">
+        <label>Tanggal</label>
+        <input type="date" id="tanggal" required>
+        <label>Jenis</label>
+        <select id="jenis" required>
+          <option value="Pengeluaran">Pengeluaran</option>
+          <option value="Pemasukan">Pemasukan</option>
+        </select>
+        <label>Nominal (IDR)</label>
+        <input type="number" id="nominal" required>
+        <label>Kategori</label>
+        <input type="text" id="kategori" required placeholder="Contoh: Makan Siang">
+        <label>Keterangan</label>
+        <input type="text" id="keterangan" required placeholder="Catatan singkat">
+        <button type="submit" class="submit-btn" id="btnTransaksi">Simpan Transaksi</button>
+      </form>
     </div>
   </div>
 
-  <script>
-    // --- KONFIGURASI API ---
-    // Link API yang kamu berikan
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxEYyeciYAFZ3Jo2vMUdTObOA0bNi4Eqd7jMdzlIRXsf_WMtnFeC64kBd-8bgJ66I5mjA/exec';
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="switchPage('pageDashboard', this)">Dashboard</button>
+    <button class="nav-btn" onclick="switchPage('pageTransaksi', this)">Transaksi</button>
+  </nav>
 
-    // Set default tanggal di form ke hari ini
+  <script>
+    // MASUKKAN LINK API APPS SCRIPT ANDA DI SINI
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxEYyeciYAFZ3Jo2vMUdTObOA0bNi4Eqd7jMdzlIRXsf_WMtnFeC64kBd-8bgJ66I5mjA/exec'; 
+
+    // --- LOGIKA UI DASAR ---
+    
+    // Set tanggal default
     document.getElementById('tanggal').valueAsDate = new Date();
 
-    // Fungsi ganti tab navigasi
-    function pindahTab(tabId, el) {
-      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-      
-      document.getElementById(tabId).classList.add('active');
-      el.classList.add('active');
-
-      // Jika pindah ke beranda, refresh data
-      if(tabId === 'beranda') {
-        ambilDataSheet();
-      }
+    // Perpindahan Halaman Tab
+    function switchPage(pageId, btn) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      btn.classList.add('active');
     }
 
+    // Slider Motivasi
+    let currentQuote = 0;
+    const slides = document.querySelectorAll('.quote-slide');
+    setInterval(() => {
+      slides[currentQuote].classList.remove('active');
+      currentQuote = (currentQuote + 1) % slides.length;
+      slides[currentQuote].classList.add('active');
+    }, 5000);
+
     // Format Rupiah
-    const formatRp = (angka) => {
-      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
-    };
+    const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
 
-    // --- FUNGSI MENGAMBIL DATA (READ) ---
-    async function ambilDataSheet() {
-      const containerList = document.getElementById('listTransaksi');
-      containerList.innerHTML = '<div class="loading-text">⏳ Memperbarui data...</div>';
+    // --- STATE DATA ---
+    let myChart = null;
 
+    // --- FUNGSI FETCH (MEMBACA DATA) ---
+    async function muatData() {
       try {
         const response = await fetch(SCRIPT_URL);
         const data = await response.json();
-
-        let totalSaldo = 0;
-        let htmlList = '';
         
-        // Asumsi Baris 1 (index 0) adalah Header
-        // Struktur: [0]Timestamp, [1]Tanggal, [2]Jenis, [3]Nominal, [4]Kategori, [5]Keterangan
-        
-        // Reverse loop agar yang terbaru (paling bawah di sheet) muncul duluan di web
-        let count = 0;
-        for (let i = data.length - 1; i > 0; i--) {
-          const baris = data[i];
-          const jenis = baris[2];
-          const nominal = Number(baris[3]) || 0;
-          const kategori = baris[4];
-          const keterangan = baris[5];
-          
-          // Tanggal sedikit dipotong agar rapi
-          let tglStr = String(baris[1]).substring(0, 10); 
-
-          // Hitung Saldo
-          if(jenis === 'Pemasukan') totalSaldo += nominal;
-          else if(jenis === 'Pengeluaran') totalSaldo -= nominal;
-
-          // Buat list HTML untuk 5 transaksi terakhir saja
-          if(count < 5) {
-            const classWarna = (jenis === 'Pemasukan') ? 'income' : 'expense';
-            const simbol = (jenis === 'Pemasukan') ? '+' : '-';
-            
-            htmlList += `
-              <div class="transaction-item">
-                <div class="t-info">
-                  <h4>${keterangan}</h4>
-                  <p>${tglStr} • ${kategori}</p>
-                </div>
-                <div class="t-amount ${classWarna}">${simbol} ${formatRp(nominal)}</div>
-              </div>
-            `;
-            count++;
-          }
-        }
-
-        // Tampilkan ke layar
-        document.getElementById('totalSaldo').innerText = formatRp(totalSaldo);
-        containerList.innerHTML = htmlList || '<div class="loading-text">Belum ada transaksi.</div>';
+        renderAkun(data.akun);
+        renderChartBudget(data.budget);
 
       } catch (error) {
-        console.error("Error ambil data:", error);
-        containerList.innerHTML = '<div class="loading-text" style="color:#ff8a80;">Gagal mengambil data. Pastikan izin Google Script sudah "Anyone".</div>';
+        console.error("Gagal memuat data", error);
       }
     }
 
-    // --- FUNGSI MENGIRIM DATA (CREATE) ---
-    document.getElementById('formTransaksi').addEventListener('submit', async (e) => {
-      e.preventDefault(); // Mencegah reload halaman
+    // Render HTML Akun (ATM Style)
+    function renderAkun(dataAkun) {
+      let html = '';
+      // Asumsi baris 1 adalah header, mulai dari index 1
+      for (let i = 1; i < dataAkun.length; i++) {
+        if(dataAkun[i][1]) { // Pastikan nama akun ada
+          html += `
+            <div class="atm-card">
+              <div class="atm-bank">${dataAkun[i][1]}</div>
+              <div class="atm-label">Saldo Saat Ini</div>
+              <div class="atm-balance">${formatRp(dataAkun[i][2])}</div>
+            </div>
+          `;
+        }
+      }
+      document.getElementById('listAkun').innerHTML = html || '<p>Belum ada akun.</p>';
+    }
+
+    // Render Grafik Chart.js untuk Budget
+    function renderChartBudget(dataBudget) {
+      let labels = [];
+      let nominals = [];
       
-      const btn = document.getElementById('btnSubmit');
-      const pesanEl = document.getElementById('pesanAlert');
-      
-      btn.innerHTML = '⏳ Sedang menyimpan...';
+      for (let i = 1; i < dataBudget.length; i++) {
+        if(dataBudget[i][1]) {
+          labels.push(dataBudget[i][1]);
+          nominals.push(dataBudget[i][2]);
+        }
+      }
+
+      const ctx = document.getElementById('budgetChart').getContext('2d');
+      if(myChart) myChart.destroy(); // Hapus grafik lama sebelum menggambar baru
+
+      myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Alokasi (IDR)',
+            data: nominals,
+            backgroundColor: '#2c3e50',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    // --- FUNGSI SUBMIT (MENGIRIM DATA) ---
+    
+    // Fungsi umum pengirim form
+    async function kirimData(formId, btnId, payload, pesanSukses) {
+      const btn = document.getElementById(btnId);
+      const textAwal = btn.innerText;
+      btn.innerText = 'Menyimpan...';
       btn.disabled = true;
 
-      // Ambil isi form
-      const dataForm = {
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        alert(pesanSukses);
+        document.getElementById(formId).reset();
+        if(formId === 'formTransaksi') document.getElementById('tanggal').valueAsDate = new Date();
+        muatData(); // Refresh tampilan
+      } catch (error) {
+        alert("Gagal menyimpan data.");
+      } finally {
+        btn.innerText = textAwal;
+        btn.disabled = false;
+      }
+    }
+
+    // Form Tambah Transaksi
+    document.getElementById('formTransaksi').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const payload = {
+        action: 'tambahTransaksi',
         tanggal: document.getElementById('tanggal').value,
         jenis: document.getElementById('jenis').value,
         nominal: document.getElementById('nominal').value,
         kategori: document.getElementById('kategori').value,
         keterangan: document.getElementById('keterangan').value
       };
-
-      try {
-        await fetch(SCRIPT_URL, {
-          method: 'POST',
-          body: JSON.stringify(dataForm)
-        });
-
-        // Sukses
-        pesanEl.style.display = 'block';
-        pesanEl.style.backgroundColor = 'var(--luna-1)';
-        pesanEl.innerText = "✅ Transaksi berhasil dicatat!";
-        
-        // Reset form
-        document.getElementById('formTransaksi').reset();
-        document.getElementById('tanggal').valueAsDate = new Date();
-        
-      } catch (error) {
-        // Error
-        pesanEl.style.display = 'block';
-        pesanEl.style.backgroundColor = '#ff8a80'; // Merah
-        pesanEl.innerText = "❌ Gagal menyimpan data.";
-        console.error(error);
-      } finally {
-        btn.innerHTML = 'Simpan Transaksi';
-        btn.disabled = false;
-        setTimeout(() => { pesanEl.style.display = 'none'; }, 3000);
-      }
+      kirimData('formTransaksi', 'btnTransaksi', payload, 'Transaksi berhasil disimpan!');
     });
 
-    // --- RENDER GRAFIK DUMMY ---
-    // (Bisa dikembangkan nanti agar membaca data asli)
-    const ctx = document.getElementById('balanceChart').getContext('2d');
-    let gradient = ctx.createLinearGradient(0, 0, 0, 200);
-    gradient.addColorStop(0, 'rgba(84, 172, 191, 0.4)');
-    gradient.addColorStop(1, 'rgba(84, 172, 191, 0)');
-
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
-        datasets: [{
-          label: 'Saldo',
-          data: [5000000, 4000000, 6500000, 3000000, 8500000, 12000000],
-          borderColor: '#A7EBF2',
-          backgroundColor: gradient,
-          borderWidth: 2, pointBackgroundColor: '#A7EBF2', pointBorderColor: '#011C40',
-          pointRadius: 4, fill: true, tension: 0.4
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { grid: { display: false }, ticks: { color: '#88a4b8' } },
-          y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { display: false } }
-        }
-      }
+    // Form Tambah Budget
+    document.getElementById('formBudget').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const payload = {
+        action: 'tambahBudget',
+        namaBudget: document.getElementById('namaBudget').value,
+        nominal: document.getElementById('nominalBudget').value
+      };
+      kirimData('formBudget', 'btnBudget', payload, 'Anggaran baru berhasil ditambahkan!');
     });
 
-    // Jalankan ambil data otomatis saat web pertama kali dibuka
-    window.onload = () => {
-      ambilDataSheet();
-    };
+    // Form Tambah Akun
+    document.getElementById('formAkun').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const payload = {
+        action: 'tambahAkun',
+        namaAkun: document.getElementById('namaAkun').value,
+        saldo: document.getElementById('saldoAkun').value
+      };
+      kirimData('formAkun', 'btnAkun', payload, 'Akun baru berhasil ditambahkan!');
+    });
+
+    // Muat data awal saat web dibuka
+    window.onload = muatData;
   </script>
 </body>
 </html>
