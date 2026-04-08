@@ -96,7 +96,7 @@
   <div class="app-logo">Luna Finance <span>by Umar Taufik</span></div>
 
   <div class="grand-total-area">
-    <div class="gt-label">Total Duit Gua</div>
+    <div class="gt-label">Total Duit Yang Allah Titip</div>
     <div class="gt-amount" id="grandTotal">Rp 0</div>
     <div class="gt-sindiran">"Emang cukup segini buat modal nikah?"</div>
   </div>
@@ -104,10 +104,10 @@
   <div id="pageDashboard" class="page active">
     
     <div class="nasihat-box">
-      <div class="nasihat-title">Nasihat Hari Ini</div>
+      <div class="nasihat-title">Kata-Kata Hari Ini</div>
       <div class="nasihat-text" id="nasihatText">"Memuat nasihat..."</div>
     </div>
-    <button class="tips-btn" onclick="document.getElementById('tipsArea').classList.toggle('show')">Lihat Jalur Langit (Tips Rejeki)</button>
+    <button class="tips-btn" onclick="document.getElementById('tipsArea').classList.toggle('show')"> Tips Rejeki Jalur Langit </button>
     <div class="tips-content" id="tipsArea">
       <p>1. Istigfar<br>2. Doa<br>3. Sedekah<br>4. Sholat Dhuha<br>5. Silaturahmi<br>6. Tawakal<br>7. Jujur dalam usaha</p>
     </div>
@@ -193,8 +193,10 @@
     const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(Math.abs(angka));
 
     const nasihat = [
-      "Risiko datang dari tidak tahu apa yang kamu lakukan.", 
-      "Tujuan bukan sekadar menghasilkan uang, tapi membuat uang bekerja untukmu.", 
+      "Jangan menabung dari sisa, tapi sisakan dari awal.” — Warren Buffett, 
+      "“Orang kaya membeli aset, bukan beban.” — Robert Kiyosaki, 
+      "Kendalikan uangmu, atau uang akan mengendalikan hidupmu.” — Dave Ramsey
+      "Kekayaan dibangun dari kebiasaan sederhana, bukan gaya hidup mewah.” — Thomas J. Stanley
       "Investasi terbaik adalah pada dirimu sendiri."
     ];
     document.getElementById('nasihatText').innerText = nasihat[new Date().getDate() % nasihat.length];
