@@ -206,4 +206,184 @@
     function switchPage(pageId, btn) {
       document.querySelectorAll('.page, .nav-btn').forEach(el => el.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
-      btn.classList
+      btn.classList.add('active');
+    }
+
+    let myChart = null;
+    let globalDataTransaksi = []; 
+    let budgetCategories = []; 
+    let incomeCategories = ["Pendapatan Usaha", "Gaji", "Pemberian", "Lainnya"];
+
+    async function muatData() {
+      try {
+        const res = await fetch(SCRIPT_URL);
+        const data = await res.json();
+        globalDataTransaksi = data.transaksi;
+        
+        budgetCategories = [];
+        for(let i=1; i<data.budget.length; i++) {
+          if(data.budget[i][1]) budgetCategories.push(data.budget[i][1]);
+        }
+
+        prosesKalkulasi(data.akun, data.transaksi, data.budget);
+        updateKategoriDropdown(); 
+        renderRiwayat(); 
+      } catch (e) { console.error(e); }
+    }
+
+    function updateKategoriDropdown() {
+      const jenis = document.getElementById('jenis').value;
+      const selectKat = document.getElementById('kategoriTransaksi');
+      selectKat.innerHTML = '';
+      
+      let options = jenis === 'Pemasukan' ? incomeCategories : budgetCategories;
+      options.forEach(kat => {
+        selectKat.innerHTML += `<option value="${kat}">${kat}</option>`;
+      });
+    }
+
+    function prosesKalkulasi(dataAkun, dataTransaksi, dataBudget) {
+      let saldoAktual = {};
+      for (let i = 1; i < dataAkun.length; i++) saldoAktual[dataAkun[i][1]] = Number(dataAkun[i][2]);
+
+      let budgetTerpakai = {};
+      let masukBulanIni = 0;
+      let keluarBulanIni = 0;
+      const blnSkrg = new Date().getMonth();
+      const thnSkrg = new Date().getFullYear();
+
+      for (let i = 1; i < dataTransaksi.length; i++) {
+        const tgl = new Date(dataTransaksi[i][1]);
+        const jenis = dataTransaksi[i][2];
+        const nominal = Number(dataTransaksi[i][3]);
+        const kategori = dataTransaksi[i][4];
+        const akun = dataTransaksi[i][5];
+
+        if (saldoAktual[akun] !== undefined) {
+          if (jenis === 'Pemasukan') saldoAktual[akun] += nominal;
+          if (jenis === 'Pengeluaran') saldoAktual[akun] -= nominal;
+        }
+
+        if (tgl.getMonth() === blnSkrg && tgl.getFullYear() === thnSkrg) {
+          if (jenis === 'Pengeluaran') {
+            budgetTerpakai[kategori] = (budgetTerpakai[kategori] || 0) + nominal;
+            keluarBulanIni += nominal;
+          } else {
+            masukBulanIni += nominal;
+          }
+        }
+      }
+
+      // Update Top Widget (Bulan Ini)
+      document.getElementById('txtMasuk').innerText = formatRp(masukBulanIni);
+      document.getElementById('txtKeluar').innerText = formatRp(keluarBulanIni);
+      
+      let maxBulan = Math.max(masukBulanIni, keluarBulanIni);
+      let pctMasuk = maxBulan === 0 ? 0 : (masukBulanIni / maxBulan) * 100;
+      let pctKeluar = maxBulan === 0 ? 0 : (keluarBulanIni / maxBulan) * 100;
+      
+      document.getElementById('barMasuk').style.width = pctMasuk + '%';
+      document.getElementById('barKeluar').style.width = pctKeluar + '%';
+
+      let totalDuit = 0, htmlAkun = '', htmlOptionAkun = '';
+      const lunaClasses = ['bg-luna-dark', 'bg-luna-mid', 'bg-luna-light'];
+      let idx = 0;
+
+      for (const [nama, saldo] of Object.entries(saldoAktual)) {
+        totalDuit += saldo;
+        htmlAkun += `<div class="atm-card ${lunaClasses[idx++ % 3]}"><div class="atm-bank">${nama}</div><div class="atm-balance">${formatRp(saldo)}</div></div>`;
+        htmlOptionAkun += `<option value="${nama}">${nama} (Sisa: ${formatRp(saldo)})</option>`;
+      }
+      document.getElementById('grandTotal').innerText = formatRp(totalDuit);
+      document.getElementById('listAkun').innerHTML = htmlAkun;
+      document.getElementById('akunTransaksi').innerHTML = htmlOptionAkun;
+
+      let labelBudget = [], dataTerpakai = [], dataSisa = [], warnaTerpakai = [];
+
+      for (let i = 1; i < dataBudget.length; i++) {
+        const namaKat = dataBudget[i][1];
+        const limit = Number(dataBudget[i][2]);
+        const terpakai = budgetTerpakai[namaKat] || 0;
+
+        if (namaKat.toLowerCase().includes('hutang')) {
+          const pct = limit > 0 ? (terpakai / limit) * 100 : 0;
+          document.getElementById('areaHutang').innerHTML = `<div class="hutang-card"><div class="hutang-header"><div class="hutang-title">Target Bayar Hutang</div><div class="hutang-sisa">${formatRp(limit - terpakai)}</div></div><div class="hutang-progress-bg"><div class="hutang-progress-fill" style="width: ${pct > 100 ? 100 : pct}%"></div></div></div>`;
+          continue; 
+        }
+
+        labelBudget.push(namaKat);
+        dataTerpakai.push(terpakai);
+        dataSisa.push(Math.max(limit - terpakai, 0));
+        warnaTerpakai.push(terpakai >= limit ? '#c0392b' : (terpakai >= limit * 0.8 ? '#f39c12' : '#023859'));
+      }
+
+      const ctx = document.getElementById('budgetChart').getContext('2d');
+      if(myChart) myChart.destroy();
+      myChart = new Chart(ctx, {
+        type: 'bar',
+        data: { labels: labelBudget, datasets: [{ label: 'Terpakai', data: dataTerpakai, backgroundColor: warnaTerpakai, borderRadius: 4 }, { label: 'Sisa Limit', data: dataSisa, backgroundColor: '#A7EBF2', borderRadius: 4 }] },
+        options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { stacked: true, ticks: {font:{size:10}} }, y: { stacked: true, display: false } } }
+      });
+    }
+
+    function renderRiwayat() {
+      const selectedDate = document.getElementById('filterTanggal').value;
+      let htmlList = '', hariMasuk = 0, hariKeluar = 0;
+
+      for (let i = globalDataTransaksi.length - 1; i >= 1; i--) {
+        const row = globalDataTransaksi[i];
+        const tglData = new Date(row[1]);
+        const tglStr = tglData.getFullYear() + "-" + String(tglData.getMonth() + 1).padStart(2, '0') + "-" + String(tglData.getDate()).padStart(2, '0');
+        
+        if (tglStr === selectedDate) {
+          const jenis = row[2], nominal = Number(row[3]), isIncome = jenis === 'Pemasukan';
+          if (isIncome) hariMasuk += nominal; else hariKeluar += nominal;
+          htmlList += `<div class="t-item"><div class="t-info"><h4>${row[6]}</h4><p>${row[5]} • ${row[4]}</p></div><div class="t-amount ${isIncome ? 'in' : 'out'}">${isIncome ? '+' : '-'} ${formatRp(nominal)}</div></div>`;
+        }
+      }
+      document.getElementById('rekamMasuk').innerText = formatRp(hariMasuk);
+      document.getElementById('rekamKeluar').innerText = formatRp(hariKeluar);
+      document.getElementById('listRiwayat').innerHTML = htmlList || '<div class="empty-state">Belum ada transaksi bro.</div>';
+    }
+
+    async function submitForm(formId, btnId, payload) {
+      const btn = document.getElementById(btnId);
+      const txt = btn.innerText;
+      btn.innerText = 'Tunggu...'; btn.disabled = true;
+      try {
+        await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+        if(formId==='formTransaksi') {
+          document.getElementById('nominal').value = '';
+          document.getElementById('keterangan').value = '';
+        } else document.getElementById(formId).reset();
+        await muatData();
+        alert("Berhasil!");
+        if(formId==='formTransaksi') switchPage('pageDashboard', document.querySelectorAll('.nav-btn')[0]);
+      } catch (e) { alert("Gagal bro!"); } 
+      finally { btn.innerText = txt; btn.disabled = false; }
+    }
+
+    // VALIDASI SEBELUM SUBMIT
+    document.getElementById('formTransaksi').addEventListener('submit', e => {
+      e.preventDefault();
+      const nom = Number(document.getElementById('nominal').value);
+      const tgl = document.getElementById('tanggal').value;
+      
+      if(nom <= 0) return alert("Nominal nggak boleh minus atau nol bro!");
+      if(!tgl) return alert("Tanggal wajib diisi!");
+
+      submitForm('formTransaksi', 'btnTransaksi', {
+        action: 'tambahTransaksi', tanggal: tgl, akun: document.getElementById('akunTransaksi').value, jenis: document.getElementById('jenis').value, kategori: document.getElementById('kategoriTransaksi').value, nominal: nom, keterangan: document.getElementById('keterangan').value
+      });
+    });
+
+    document.getElementById('formBudget').addEventListener('submit', e => {
+      e.preventDefault();
+      if(Number(document.getElementById('nominalBudget').value) <= 0) return alert("Limit nggak boleh nol!");
+      submitForm('formBudget', 'btnBudget', { action: 'tambahBudget', namaBudget: document.getElementById('namaBudget').value, nominal: document.getElementById('nominalBudget').value });
+    });
+
+    window.onload = muatData;
+  </script>
+</body>
+</html>
