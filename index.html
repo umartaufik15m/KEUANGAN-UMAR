@@ -26,267 +26,357 @@
     body {
       background-color: var(--luna-5);
       color: var(--text-light);
-      padding: 20px 20px 80px 20px; /* Padding bawah untuk bottom nav */
+      padding: 20px 20px 80px 20px;
     }
 
-    /* Header Profile */
+    /* Tampilan per Section */
+    .section {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .section.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- HEADER --- */
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 24px;
     }
-
-    .user-greeting {
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
-
+    .user-greeting { font-size: 1.2rem; font-weight: bold; }
     .user-avatar {
-      width: 40px;
-      height: 40px;
-      background-color: var(--luna-3);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      color: var(--luna-1);
+      width: 40px; height: 40px;
+      background-color: var(--luna-3); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: bold; color: var(--luna-1);
     }
 
-    /* Card Saldo */
+    /* --- DASHBOARD ELEMENTS --- */
     .balance-card {
       background: linear-gradient(135deg, var(--luna-2), var(--luna-3));
-      border-radius: 20px;
-      padding: 24px;
+      border-radius: 20px; padding: 24px;
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-      margin-bottom: 24px;
-      position: relative;
-      overflow: hidden;
+      margin-bottom: 24px; position: relative; overflow: hidden;
     }
-
-    .balance-label {
-      font-size: 0.9rem;
-      color: rgba(255, 255, 255, 0.8);
-      margin-bottom: 8px;
-    }
-
-    .balance-amount {
-      font-size: 2rem;
-      font-weight: bold;
-      color: #fff;
-    }
-
+    .balance-label { font-size: 0.9rem; color: rgba(255, 255, 255, 0.8); margin-bottom: 8px; }
+    .balance-amount { font-size: 2rem; font-weight: bold; color: #fff; }
     .balance-card::after {
-      content: '';
-      position: absolute;
-      width: 150px;
-      height: 150px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-      top: -50px;
-      right: -50px;
+      content: ''; position: absolute; width: 150px; height: 150px;
+      background: rgba(255, 255, 255, 0.1); border-radius: 50%;
+      top: -50px; right: -50px;
     }
 
-    /* Card Grafik */
     .chart-container {
-      background-color: var(--luna-4);
-      border-radius: 20px;
-      padding: 16px;
-      margin-bottom: 24px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      background-color: var(--luna-4); border-radius: 20px;
+      padding: 16px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
+    .section-title { font-size: 1.1rem; font-weight: 500; margin-bottom: 16px; color: var(--text-light); }
 
-    .section-title {
-      font-size: 1.1rem;
-      font-weight: 500;
-      margin-bottom: 16px;
-      color: var(--text-light);
-    }
-
-    /* Transaksi Terakhir */
     .transaction-list {
-      background-color: var(--luna-4);
-      border-radius: 20px;
-      padding: 16px;
+      background-color: var(--luna-4); border-radius: 20px; padding: 16px;
     }
-
     .transaction-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
-
-    .transaction-item:last-child {
-      border-bottom: none;
-    }
-
-    .t-info h4 {
-      font-size: 0.95rem;
-      font-weight: 500;
-      margin-bottom: 4px;
-    }
-
-    .t-info p {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    .t-amount {
-      font-weight: bold;
-      font-size: 0.95rem;
-    }
-
+    .transaction-item:last-child { border-bottom: none; }
+    .t-info h4 { font-size: 0.95rem; font-weight: 500; margin-bottom: 4px; }
+    .t-info p { font-size: 0.8rem; color: var(--text-muted); }
+    .t-amount { font-weight: bold; font-size: 0.95rem; }
     .income { color: var(--luna-1); }
-    .expense { color: #ff8a80; } /* Warna aksen merah lembut untuk pengeluaran */
+    .expense { color: #ff8a80; }
+    .loading-text { text-align: center; color: var(--text-muted); padding: 20px 0; font-size: 0.9rem; }
 
-    /* Bottom Navigation */
+    /* --- FORM ELEMENTS (Dark Mode) --- */
+    .form-card {
+      background-color: var(--luna-4); border-radius: 20px;
+      padding: 24px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--luna-1); font-weight: bold; }
+    input, select {
+      width: 100%; padding: 14px;
+      background-color: var(--luna-5); color: var(--text-light);
+      border: 1px solid var(--luna-3); border-radius: 12px;
+      font-size: 1rem; outline: none; transition: border 0.3s;
+    }
+    input:focus, select:focus { border-color: var(--luna-1); }
+    button.btn-primary {
+      width: 100%; background-color: var(--luna-2); color: var(--luna-5);
+      border: none; padding: 16px; border-radius: 12px;
+      font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px;
+    }
+    button.btn-primary:active { background-color: var(--luna-1); }
+    #pesanAlert {
+      display: none; background-color: var(--luna-1); color: var(--luna-5);
+      padding: 15px; border-radius: 12px; margin-bottom: 20px; text-align: center; font-weight: bold;
+    }
+
+    /* --- BOTTOM NAV --- */
     .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background-color: var(--luna-4);
-      display: flex;
-      justify-content: space-around;
-      padding: 16px 0;
-      border-top-left-radius: 24px;
-      border-top-right-radius: 24px;
-      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
+      position: fixed; bottom: 0; left: 0; width: 100%;
+      background-color: var(--luna-4); display: flex; justify-content: space-around;
+      padding: 16px 0; border-top-left-radius: 24px; border-top-right-radius: 24px;
+      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2); z-index: 10;
     }
-
-    .nav-item {
-      color: var(--text-muted);
-      text-align: center;
-      font-size: 0.8rem;
-      cursor: pointer;
-    }
-
-    .nav-item.active {
-      color: var(--luna-1);
-    }
-
-    .nav-icon {
-      font-size: 1.2rem;
-      display: block;
-      margin-bottom: 4px;
-    }
+    .nav-item { color: var(--text-muted); text-align: center; font-size: 0.8rem; cursor: pointer; transition: 0.3s;}
+    .nav-item.active { color: var(--luna-1); transform: translateY(-3px);}
+    .nav-icon { font-size: 1.2rem; display: block; margin-bottom: 4px; }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <div class="user-greeting">Overview</div>
-    <div class="user-avatar">U</div>
+  <div id="beranda" class="section active">
+    <div class="header">
+      <div class="user-greeting">Overview</div>
+      <div class="user-avatar">L</div>
+    </div>
+
+    <div class="balance-card">
+      <div class="balance-label">Total saldo cash</div>
+      <div class="balance-amount" id="totalSaldo">Rp ...</div>
+    </div>
+
+    <div class="chart-container">
+      <div class="section-title">Statistik bulanan</div>
+      <canvas id="balanceChart" height="200"></canvas>
+    </div>
+
+    <div class="transaction-list">
+      <div class="section-title">Transaksi terbaru</div>
+      <div id="listTransaksi">
+        <div class="loading-text">⏳ Mengambil data dari Google Sheets...</div>
+      </div>
+    </div>
   </div>
 
-  <div class="balance-card">
-    <div class="balance-label">Total saldo cash</div>
-    <div class="balance-amount">Rp 12.450.000</div>
-  </div>
-
-  <div class="chart-container">
-    <div class="section-title">Statistik bulanan</div>
-    <canvas id="balanceChart" height="200"></canvas>
-  </div>
-
-  <div class="transaction-list">
-    <div class="section-title">Transaksi terbaru</div>
+  <div id="tambah" class="section">
+    <div class="header">
+      <div class="user-greeting">Catat Transaksi</div>
+    </div>
     
-    <div class="transaction-item">
-      <div class="t-info">
-        <h4>Belanja bahan</h4>
-        <p>08 Apr • Operasional</p>
-      </div>
-      <div class="t-amount expense">- Rp 450.000</div>
-    </div>
+    <div id="pesanAlert"></div>
 
-    <div class="transaction-item">
-      <div class="t-info">
-        <h4>Penjualan harian</h4>
-        <p>07 Apr • Pemasukan</p>
-      </div>
-      <div class="t-amount income">+ Rp 1.200.000</div>
-    </div>
-
-    <div class="transaction-item">
-      <div class="t-info">
-        <h4>Listrik & Air</h4>
-        <p>05 Apr • Utilitas</p>
-      </div>
-      <div class="t-amount expense">- Rp 300.000</div>
+    <div class="form-card">
+      <form id="formTransaksi">
+        <div class="form-group">
+          <label>Tanggal</label>
+          <input type="date" id="tanggal" name="tanggal" required>
+        </div>
+        <div class="form-group">
+          <label>Jenis transaksi</label>
+          <select id="jenis" name="jenis" required>
+            <option value="Pengeluaran">Pengeluaran</option>
+            <option value="Pemasukan">Pemasukan</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Nominal (Rp)</label>
+          <input type="number" id="nominal" name="nominal" placeholder="Contoh: 50000" required>
+        </div>
+        <div class="form-group">
+          <label>Kategori</label>
+          <select id="kategori" name="kategori" required>
+            <option value="Makan & Minum">Makan & Minum</option>
+            <option value="Transportasi">Transportasi</option>
+            <option value="Belanja operasional">Belanja Operasional</option>
+            <option value="Pemasukan / Penjualan">Pemasukan / Penjualan</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Keterangan / Catatan</label>
+          <input type="text" id="keterangan" name="keterangan" placeholder="Contoh: Beli token listrik" required>
+        </div>
+        <button type="submit" class="btn-primary" id="btnSubmit">Simpan Transaksi</button>
+      </form>
     </div>
   </div>
 
   <div class="bottom-nav">
-    <div class="nav-item active">
+    <div class="nav-item active" onclick="pindahTab('beranda', this)">
       <span class="nav-icon">📊</span>
       Beranda
     </div>
-    <div class="nav-item">
-      <span class="nav-icon">💳</span>
-      Kartu
-    </div>
-    <div class="nav-item">
+    <div class="nav-item" onclick="pindahTab('tambah', this)">
       <span class="nav-icon">➕</span>
       Tambah
-    </div>
-    <div class="nav-item">
-      <span class="nav-icon">⚙️</span>
-      Pengaturan
     </div>
   </div>
 
   <script>
-    // Konfigurasi Chart.js
+    // --- KONFIGURASI API ---
+    // Link API yang kamu berikan
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxEYyeciYAFZ3Jo2vMUdTObOA0bNi4Eqd7jMdzlIRXsf_WMtnFeC64kBd-8bgJ66I5mjA/exec';
+
+    // Set default tanggal di form ke hari ini
+    document.getElementById('tanggal').valueAsDate = new Date();
+
+    // Fungsi ganti tab navigasi
+    function pindahTab(tabId, el) {
+      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+      el.classList.add('active');
+
+      // Jika pindah ke beranda, refresh data
+      if(tabId === 'beranda') {
+        ambilDataSheet();
+      }
+    }
+
+    // Format Rupiah
+    const formatRp = (angka) => {
+      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+    };
+
+    // --- FUNGSI MENGAMBIL DATA (READ) ---
+    async function ambilDataSheet() {
+      const containerList = document.getElementById('listTransaksi');
+      containerList.innerHTML = '<div class="loading-text">⏳ Memperbarui data...</div>';
+
+      try {
+        const response = await fetch(SCRIPT_URL);
+        const data = await response.json();
+
+        let totalSaldo = 0;
+        let htmlList = '';
+        
+        // Asumsi Baris 1 (index 0) adalah Header
+        // Struktur: [0]Timestamp, [1]Tanggal, [2]Jenis, [3]Nominal, [4]Kategori, [5]Keterangan
+        
+        // Reverse loop agar yang terbaru (paling bawah di sheet) muncul duluan di web
+        let count = 0;
+        for (let i = data.length - 1; i > 0; i--) {
+          const baris = data[i];
+          const jenis = baris[2];
+          const nominal = Number(baris[3]) || 0;
+          const kategori = baris[4];
+          const keterangan = baris[5];
+          
+          // Tanggal sedikit dipotong agar rapi
+          let tglStr = String(baris[1]).substring(0, 10); 
+
+          // Hitung Saldo
+          if(jenis === 'Pemasukan') totalSaldo += nominal;
+          else if(jenis === 'Pengeluaran') totalSaldo -= nominal;
+
+          // Buat list HTML untuk 5 transaksi terakhir saja
+          if(count < 5) {
+            const classWarna = (jenis === 'Pemasukan') ? 'income' : 'expense';
+            const simbol = (jenis === 'Pemasukan') ? '+' : '-';
+            
+            htmlList += `
+              <div class="transaction-item">
+                <div class="t-info">
+                  <h4>${keterangan}</h4>
+                  <p>${tglStr} • ${kategori}</p>
+                </div>
+                <div class="t-amount ${classWarna}">${simbol} ${formatRp(nominal)}</div>
+              </div>
+            `;
+            count++;
+          }
+        }
+
+        // Tampilkan ke layar
+        document.getElementById('totalSaldo').innerText = formatRp(totalSaldo);
+        containerList.innerHTML = htmlList || '<div class="loading-text">Belum ada transaksi.</div>';
+
+      } catch (error) {
+        console.error("Error ambil data:", error);
+        containerList.innerHTML = '<div class="loading-text" style="color:#ff8a80;">Gagal mengambil data. Pastikan izin Google Script sudah "Anyone".</div>';
+      }
+    }
+
+    // --- FUNGSI MENGIRIM DATA (CREATE) ---
+    document.getElementById('formTransaksi').addEventListener('submit', async (e) => {
+      e.preventDefault(); // Mencegah reload halaman
+      
+      const btn = document.getElementById('btnSubmit');
+      const pesanEl = document.getElementById('pesanAlert');
+      
+      btn.innerHTML = '⏳ Sedang menyimpan...';
+      btn.disabled = true;
+
+      // Ambil isi form
+      const dataForm = {
+        tanggal: document.getElementById('tanggal').value,
+        jenis: document.getElementById('jenis').value,
+        nominal: document.getElementById('nominal').value,
+        kategori: document.getElementById('kategori').value,
+        keterangan: document.getElementById('keterangan').value
+      };
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify(dataForm)
+        });
+
+        // Sukses
+        pesanEl.style.display = 'block';
+        pesanEl.style.backgroundColor = 'var(--luna-1)';
+        pesanEl.innerText = "✅ Transaksi berhasil dicatat!";
+        
+        // Reset form
+        document.getElementById('formTransaksi').reset();
+        document.getElementById('tanggal').valueAsDate = new Date();
+        
+      } catch (error) {
+        // Error
+        pesanEl.style.display = 'block';
+        pesanEl.style.backgroundColor = '#ff8a80'; // Merah
+        pesanEl.innerText = "❌ Gagal menyimpan data.";
+        console.error(error);
+      } finally {
+        btn.innerHTML = 'Simpan Transaksi';
+        btn.disabled = false;
+        setTimeout(() => { pesanEl.style.display = 'none'; }, 3000);
+      }
+    });
+
+    // --- RENDER GRAFIK DUMMY ---
+    // (Bisa dikembangkan nanti agar membaca data asli)
     const ctx = document.getElementById('balanceChart').getContext('2d');
-    
-    // Gradient untuk area di bawah garis
     let gradient = ctx.createLinearGradient(0, 0, 0, 200);
-    gradient.addColorStop(0, 'rgba(84, 172, 191, 0.4)'); // Luna-2 transparan
+    gradient.addColorStop(0, 'rgba(84, 172, 191, 0.4)');
     gradient.addColorStop(1, 'rgba(84, 172, 191, 0)');
 
-    const balanceChart = new Chart(ctx, {
+    new Chart(ctx, {
       type: 'line',
       data: {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
         datasets: [{
           label: 'Saldo',
-          data: [5000, 7000, 6500, 9000, 8500, 12450],
-          borderColor: '#A7EBF2', // Luna-1
+          data: [5000000, 4000000, 6500000, 3000000, 8500000, 12000000],
+          borderColor: '#A7EBF2',
           backgroundColor: gradient,
-          borderWidth: 2,
-          pointBackgroundColor: '#A7EBF2',
-          pointBorderColor: '#011C40',
-          pointBorderWidth: 2,
-          pointRadius: 4,
-          fill: true,
-          tension: 0.4 // Membuat garis melengkung halus
+          borderWidth: 2, pointBackgroundColor: '#A7EBF2', pointBorderColor: '#011C40',
+          pointRadius: 4, fill: true, tension: 0.4
         }]
       },
       options: {
         responsive: true,
-        plugins: {
-          legend: { display: false }
-        },
+        plugins: { legend: { display: false } },
         scales: {
-          x: {
-            grid: { display: false, drawBorder: false },
-            ticks: { color: '#88a4b8', font: { size: 10 } }
-          },
-          y: {
-            grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
-            ticks: { display: false } // Menyembunyikan angka di sumbu Y agar bersih
-          }
+          x: { grid: { display: false }, ticks: { color: '#88a4b8' } },
+          y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { display: false } }
         }
       }
     });
 
-    // TEMPAT UNTUK FUNGSI FETCH KE GOOGLE APPS SCRIPT NANTINYA
-    // function ambilDataDariSheet() { ... }
-    // function kirimDataKeSheet() { ... }
+    // Jalankan ambil data otomatis saat web pertama kali dibuka
+    window.onload = () => {
+      ambilDataSheet();
+    };
   </script>
 </body>
 </html>
