@@ -35,7 +35,6 @@
     /* AUTH SCREEN */
     #screen-auth { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, #1A1C23 0%, var(--bg-dark) 100%); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; }
     .auth-logo { width: 80px; height: 80px; background: var(--luna-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 30px; box-shadow: 0 0 40px rgba(155, 168, 219, 0.2);}
-    .auth-logo::after { content:''; width: 30px; height: 30px; background: var(--bg-dark); border-radius: 50%; border-bottom-right-radius: 0; transform: rotate(45deg); }
     .auth-title { font-size: 1.8rem; font-weight: 800; letter-spacing: 4px; color: var(--luna-primary); margin-bottom: 5px; }
     .auth-subtitle { font-size: 0.8rem; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 50px; text-transform: uppercase; }
     .auth-card { background: var(--bg-surface); padding: 30px; border-radius: 24px; width: 100%; border: 1px solid var(--border-color); }
@@ -49,8 +48,12 @@
     .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid var(--border-color); margin-bottom: 15px;}
     .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; letter-spacing: 2px; color: var(--luna-primary);}
     .nav-brand i { font-size: 1.5rem; }
-    .nav-actions { font-size: 0.95rem; font-weight: 600; color: var(--text-main); letter-spacing: 1px; }
+    .nav-actions { font-size: 0.95rem; font-weight: 600; color: var(--text-main); letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
     .header-date { font-size: 0.65rem; color: var(--text-muted); font-weight: 500; letter-spacing: 0.5px; margin-top: 3px; text-transform: none;}
+
+    /* FULLSCREEN BTN */
+    .btn-fs { cursor: pointer; color: var(--text-muted); transition: 0.2s; }
+    .btn-fs:hover { color: var(--luna-primary); }
 
     /* PAGES */
     .page { display: none; padding: 0 24px; animation: fadeIn 0.3s ease; }
@@ -78,6 +81,14 @@
     .hutang-sisa { font-size: 1.3rem; font-weight: 700; color: #fff; }
     .progress-bg { background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden; }
     .progress-fill { height: 100%; background: var(--expense-red); transition: width 0.5s; }
+
+    /* TARGET CARD */
+    .target-item { background: var(--bg-surface-light); border-radius: 16px; padding: 15px; display: flex; gap: 15px; margin-bottom: 15px;}
+    .target-icon { width: 60px; height: 60px; background: #111; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-muted);}
+    .target-info { flex: 1; }
+    .target-head { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.95rem; margin-bottom: 10px;}
+    .target-head span:last-child { color: var(--income-green); }
+    .target-desc { font-size: 0.7rem; color: var(--text-muted); margin-top: 8px; line-height: 1.4;}
 
     .section-header { display: flex; justify-content: space-between; align-items: center; margin: 30px 0 15px 0; }
     .link-primary { color: var(--luna-primary); font-size: 0.8rem; font-weight: 600; letter-spacing: 1px; text-decoration: none; text-transform: uppercase; }
@@ -146,14 +157,7 @@
     .frontier-title i { background: var(--bg-surface-light); padding: 8px; border-radius: 8px; color: var(--text-muted); }
     .status-active { color: var(--income-green); font-size: 0.75rem; font-weight: 600; }
 
-    .target-item { background: var(--bg-surface-light); border-radius: 16px; padding: 15px; display: flex; gap: 15px; margin-bottom: 15px;}
-    .target-icon { width: 60px; height: 60px; background: #111; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-muted);}
-    .target-info { flex: 1; }
-    .target-head { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.95rem; margin-bottom: 10px;}
-    .target-head span:last-child { color: var(--income-green); }
-    .target-desc { font-size: 0.7rem; color: var(--text-muted); margin-top: 8px; line-height: 1.4;}
-
-    /* BOTTOM NAV (Diperbaiki hover/active nya) */
+    /* BOTTOM NAV */
     .bottom-nav { 
       position: fixed; bottom: 0; left: 0; width: 100%; 
       background: rgba(30, 30, 30, 0.95); backdrop-filter: blur(10px); 
@@ -167,16 +171,8 @@
     }
     .nav-item i { font-size: 1.3rem; transition: transform 0.3s ease; }
     
-    /* Efek Active (Gerak & Berubah Warna) */
     .nav-item.active { color: var(--luna-primary); }
     .nav-item.active i { transform: translateY(-4px); }
-    
-    .nav-input-btn { 
-      background: var(--luna-primary-dark); color: var(--luna-primary); 
-      padding: 12px 0; border-radius: 16px; margin-top: -10px; width: 80%; max-width: 90px;
-      border: 1px solid var(--luna-primary);
-    }
-    .nav-input-btn.active { background: var(--luna-primary); color: var(--bg-dark); }
   </style>
 </head>
 <body>
@@ -184,7 +180,7 @@
   <div class="app-container">
     
     <div id="screen-auth">
-      <div class="auth-logo"><i class="fa-solid fa-moon fa-2x" style="color:var(--bg-dark);"></i></div>
+      <div class="auth-logo"><i class="fa-solid fa-cloud fa-2x" style="color:var(--bg-dark);"></i></div>
       <div class="auth-title">LUNA FINANCE</div>
       <div class="auth-subtitle">Authentication Layer</div>
       <div class="auth-card">
@@ -211,7 +207,10 @@
             <div class="header-date" id="headerDate">Memuat tanggal...</div>
           </div>
         </div>
-        <div class="nav-actions">Umar Taufik</div>
+        <div class="nav-actions">
+          <span>Umar Taufik</span>
+          <i class="fa-solid fa-expand btn-fs" onclick="toggleFullScreen()" title="Full Screen"></i>
+        </div>
       </div>
 
       <div id="page-dashboard" class="page active">
@@ -243,6 +242,12 @@
         </div>
 
         <div id="dashHutangList" style="margin-top: 15px;"></div>
+
+        <div class="label-caps" style="color:#fff; font-size:0.85rem; margin-top:30px; display:flex; align-items:center; gap:10px;">
+          <i class="fa-solid fa-circle-star" style="color:var(--income-green); font-size:1.2rem;"></i> Financial Targets
+        </div>
+        <p style="font-size:0.75rem; color:var(--text-muted); margin:5px 0 15px 0; margin-left: 28px;">Long-range goals for capital accumulation.</p>
+        <div id="setGoalList"></div>
 
         <div class="section-header">
           <div class="label-caps" style="color:#fff;">Recent Activity</div>
@@ -332,7 +337,7 @@
       <div id="page-settings" class="page">
         <div class="label-caps" style="color:var(--luna-primary); margin-bottom: 5px;">System Configuration</div>
         <h1 style="font-size: 2rem; margin-bottom: 15px;">Control Layer</h1>
-        <p class="settings-desc">Monitoring your account parameters, budget ceilings, and celestial savings goals.</p>
+        <p class="settings-desc">Monitoring your account parameters and budget ceilings.</p>
 
         <div class="control-card">
           <i class="fa-solid fa-building-columns control-icon"></i>
@@ -343,17 +348,11 @@
         <div class="label-caps" style="color:#fff; font-size:0.85rem; margin-top:30px;">Allocation Frontiers</div>
         <p style="font-size:0.75rem; color:var(--text-muted); margin:5px 0 15px 0;">Constraints per category for this celestial cycle.</p>
         <div id="setBudgetList"></div>
-
-        <div class="label-caps" style="color:#fff; font-size:0.85rem; margin-top:30px; display:flex; align-items:center; gap:10px;">
-          <i class="fa-solid fa-circle-star" style="color:var(--income-green); font-size:1.2rem;"></i> Financial Targets
-        </div>
-        <p style="font-size:0.75rem; color:var(--text-muted); margin:5px 0 15px 0; margin-left: 28px;">Long-range goals for capital accumulation.</p>
-        <div id="setGoalList"></div>
       </div>
 
       <div class="bottom-nav">
         <div class="nav-item active" id="nav-dash" onclick="navTo('page-dashboard', this)"><i class="fa-solid fa-border-all"></i> Dashboard</div>
-        <div class="nav-item nav-input-btn" id="nav-inp" onclick="navTo('page-input', this)"><i class="fa-solid fa-circle-plus"></i> Input</div>
+        <div class="nav-item" id="nav-inp" onclick="navTo('page-input', this)"><i class="fa-solid fa-circle-plus"></i> Input</div>
         <div class="nav-item" id="nav-hist" onclick="navTo('page-history', this)"><i class="fa-solid fa-clock-rotate-left"></i> History</div>
         <div class="nav-item" id="nav-set" onclick="navTo('page-settings', this)"><i class="fa-solid fa-gear"></i> Settings</div>
       </div>
@@ -380,6 +379,18 @@
     const nasihat = ["Hindari sifat malas dan kikir.", "Buat uang bekerja untukmu, bukan sebaliknya.", "Investasi terbaik ada pada dirimu."];
     document.getElementById('nasihatHarian').innerText = nasihat[new Date().getDate() % nasihat.length];
 
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          alert(`Gagal masuk mode fullscreen bro: ${err.message}`);
+        });
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
     function login() {
       const p = document.getElementById('vaultPin').value;
       if (p === PIN_BENAR) {
@@ -391,13 +402,10 @@
       }
     }
 
-    // Fungsi Navigasi Diperbaiki
     function navTo(pageId, el) {
-      // Hilangkan semua class active dari page dan menu nav
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       
-      // Tambahkan class active ke page dan menu yang dipilih
       document.getElementById(pageId).classList.add('active');
       if(el) el.classList.add('active');
       
@@ -422,7 +430,6 @@
       const sel = document.getElementById('inpKat');
       sel.innerHTML = '';
       
-      // Ambil kategori dari Budget, tapi filter yang ada nama "Hutang" biar gak nyampur
       let kats = jenis === 'Pemasukan' ? ["Gaji", "Freelance", "Lainnya"] : gBudget.slice(1).map(b => b[1]);
       kats.forEach(k => sel.innerHTML += `<option value="${k}">${k}</option>`);
     }
@@ -491,7 +498,7 @@
       document.getElementById('dashActivity').innerHTML = actHtml || '<p style="color:#888; font-size:0.8rem;">No activity.</p>';
       document.getElementById('dashAkunList').innerHTML = dashAkunHtml;
 
-      // Update Dashboard Hutang (Dicari dari Budget yang namanya ada unsur "Hutang")
+      // Update Dashboard Hutang
       let dashHutangHtml = '';
       for(let i=1; i<gBudget.length; i++) {
         const kat = gBudget[i][1], lim = Number(gBudget[i][2]);
@@ -568,7 +575,7 @@
 
       let budgHtml = '';
       for(let i=1; i<gBudget.length; i++) {
-        if(gBudget[i][1].toLowerCase().includes('hutang')) continue; // Hutang gak masuk sini
+        if(gBudget[i][1].toLowerCase().includes('hutang')) continue; 
         budgHtml += `
           <div class="frontier-item">
             <div class="frontier-header">
@@ -581,6 +588,7 @@
       }
       document.getElementById('setBudgetList').innerHTML = budgHtml;
 
+      // Target Goals (Pindah ke Dashboard)
       let tgtHtml = '';
       for(let i=1; i<gTarget.length; i++) {
         const lim = Number(gTarget[i][2]), terkumpul = Number(gTarget[i][3]);
