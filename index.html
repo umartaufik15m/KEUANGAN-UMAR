@@ -79,6 +79,11 @@
     button.submit-btn { width: 100%; padding: 14px; background: var(--luna-4); color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; text-transform: uppercase; transition: 0.2s;}
 
     /* Riwayat */
+    /* Tambahan Fitur Baru */
+    .search-box { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; outline: none; background: #fafafa; color: var(--luna-5); }
+    .search-box:focus { border-color: var(--luna-3); }
+    .export-btn { width: 100%; background: transparent; border: 1px solid var(--income); color: var(--income); padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 20px; transition: 0.2s;}
+    .export-btn:hover { background: var(--income); color: white; }
     .riwayat-summary { display: flex; gap: 10px; margin-bottom: 20px; }
     .r-box { flex: 1; background: var(--card-bg); padding: 12px; border-radius: 8px; border: 1px solid var(--border); text-align: center;}
     .r-box span { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; font-weight: 700;}
@@ -174,6 +179,14 @@
   <div id="pageRiwayat" class="page">
     <h2 class="section-title">Riwayat</h2>
     <div class="form-box" style="margin-bottom: 20px;">
+      <label>Filter Tanggal</label>
+      <input type="date" id="filterTanggal" onchange="renderRiwayat()">
+      
+      <label style="margin-top: 12px;">Cari Transaksi</label>
+      <input type="text" id="searchRiwayat" class="search-box" placeholder="Ketik catatan, nama akun, atau kategori..." onkeyup="renderRiwayat()">
+      
+      <button class="export-btn" onclick="downloadCSV()">⬇️ Unduh Laporan Hari Ini (.csv)</button>
+    </div>
       <label>Tanggal</label>
       <input type="date" id="filterTanggal" onchange="renderRiwayat()">
     </div>
@@ -328,6 +341,7 @@
 
     function renderRiwayat() {
       const selectedDate = document.getElementById('filterTanggal').value;
+      const keyword = document.getElementById('searchRiwayat').value.toLowerCase();
       let htmlList = '', hariMasuk = 0, hariKeluar = 0;
 
       for (let i = globalDataTransaksi.length - 1; i >= 1; i--) {
@@ -335,7 +349,10 @@
         const tglData = new Date(row[1]);
         const tglStr = tglData.getFullYear() + "-" + String(tglData.getMonth() + 1).padStart(2, '0') + "-" + String(tglData.getDate()).padStart(2, '0');
         
-        if (tglStr === selectedDate) {
+        // Pencarian teks (Keterangan, Kategori, atau Akun)
+        const teksPencarian = (row[6] + " " + row[4] + " " + row[5]).toLowerCase();
+        
+        if (tglStr === selectedDate && teksPencarian.includes(keyword)) {
           const jenis = row[2], nominal = Number(row[3]), isIncome = jenis === 'Pemasukan';
           if (isIncome) hariMasuk += nominal; else hariKeluar += nominal;
           htmlList += `<div class="t-item"><div class="t-info"><h4>${row[6]}</h4><p>${row[5]} • ${row[4]}</p></div><div class="t-amount ${isIncome ? 'in' : 'out'}">${isIncome ? '+' : '-'} ${formatRp(nominal)}</div></div>`;
@@ -345,7 +362,38 @@
       document.getElementById('rekamKeluar').innerText = formatRp(hariKeluar);
       document.getElementById('listRiwayat').innerHTML = htmlList || '<div class="empty-state">Belum ada transaksi bro.</div>';
     }
+    function downloadCSV() {
+      const selectedDate = document.getElementById('filterTanggal').value;
+      let csvContent = "data:text/csv;charset=utf-8,Tanggal,Jenis,Akun,Kategori,Nominal,Keterangan\n";
+      
+      let adaData = false;
+      for (let i = 1; i < globalDataTransaksi.length; i++) {
+        const row = globalDataTransaksi[i];
+        const tglData = new Date(row[1]);
+        const tglStr = tglData.getFullYear() + "-" + String(tglData.getMonth() + 1).padStart(2, '0') + "-" + String(tglData.getDate()).padStart(2, '0');
+        
+        if (tglStr === selectedDate) {
+          adaData = true;
+          // Format baris CSV
+          let baris = `${tglStr},${row[2]},${row[5]},${row[4]},${row[3]},"${row[6]}"`;
+          csvContent += baris + "\n";
+        }
+      }
 
+      if (!adaData) {
+        alert("Nggak ada data di tanggal ini buat di-download bro!");
+        return;
+      }
+
+      // Proses Download
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Laporan_${selectedDate}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
     async function submitForm(formId, btnId, payload) {
       const btn = document.getElementById(btnId);
       const txt = btn.innerText;
