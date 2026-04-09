@@ -9,12 +9,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
-    /* LUNA FINANCE COLOR PALETTE & VARIABLES */
     :root {
       --bg-dark: #121212;
       --bg-surface: #1E1E1E;
       --bg-surface-light: #2A2A2A;
-      --luna-primary: #9BA8DB; /* The signature periwinkle blue */
+      --luna-primary: #9BA8DB; 
       --luna-primary-dark: #2B3253;
       --text-main: #FFFFFF;
       --text-muted: #888888;
@@ -26,33 +25,15 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family); -webkit-tap-highlight-color: transparent; }
     
-    body { 
-      background-color: var(--bg-dark); 
-      color: var(--text-main); 
-      display: flex; 
-      justify-content: center;
-    }
+    body { background-color: var(--bg-dark); color: var(--text-main); display: flex; justify-content: center; }
 
-    /* Mobile App Container */
-    .app-container {
-      width: 100%;
-      max-width: 480px; /* Mobile width even on desktop */
-      min-height: 100vh;
-      background-color: var(--bg-dark);
-      position: relative;
-      overflow-x: hidden;
-    }
+    .app-container { width: 100%; max-width: 480px; min-height: 100vh; background-color: var(--bg-dark); position: relative; overflow-x: hidden; }
 
-    /* TYPOGRAPHY */
     h1, h2, h3 { font-weight: 600; letter-spacing: -0.5px; }
     .label-caps { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 600; }
 
-    /* AUTHENTICATION SCREEN */
-    #screen-auth {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      background: linear-gradient(180deg, #1A1C23 0%, var(--bg-dark) 100%);
-      z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px;
-    }
+    /* AUTH SCREEN */
+    #screen-auth { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, #1A1C23 0%, var(--bg-dark) 100%); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; }
     .auth-logo { width: 80px; height: 80px; background: var(--luna-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 30px; position: relative; box-shadow: 0 0 40px rgba(155, 168, 219, 0.2);}
     .auth-logo::after { content:''; width: 30px; height: 30px; background: var(--bg-dark); border-radius: 50%; border-bottom-right-radius: 0; transform: rotate(45deg); }
     .auth-title { font-size: 1.8rem; font-weight: 800; letter-spacing: 4px; color: var(--luna-primary); margin-bottom: 5px; }
@@ -66,10 +47,8 @@
     .btn-luna { background: var(--luna-primary); color: var(--bg-dark); width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.2s;}
     .btn-luna:active { transform: scale(0.98); opacity: 0.8; }
 
-    /* MAIN APP AREA */
+    /* MAIN NAV */
     #screen-main { display: none; padding-bottom: 90px; }
-
-    /* TOP NAV */
     .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; }
     .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; letter-spacing: 2px; color: var(--luna-primary);}
     .nav-brand i { font-size: 1.5rem; }
@@ -81,12 +60,10 @@
     .page.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* DASHBOARD PAGE */
-    .net-worth-area { margin-top: 10px; margin-bottom: 30px; }
+    /* DASHBOARD */
     .net-worth-amount { font-size: 3rem; font-weight: 700; margin: 5px 0 15px 0; color: var(--text-main); }
     .net-worth-amount span { color: var(--luna-primary); }
     .badge-green { background: rgba(76, 175, 80, 0.15); color: var(--income-green); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
-
     .card { background: var(--bg-surface); border-radius: 20px; padding: 20px; border: 1px solid var(--border-color); margin-bottom: 20px; }
     .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
     .summary-val { font-size: 1.4rem; font-weight: 700; margin-top: 5px; }
@@ -119,9 +96,7 @@
     .act-amount { font-weight: 600; font-size: 0.95rem; }
 
     .insight-card { background: linear-gradient(135deg, var(--bg-surface) 0%, #1a1a2e 100%); border-left: 3px solid var(--luna-primary); }
-    .insight-card p { font-size: 0.9rem; color: var(--text-muted); margin: 10px 0 20px 0; line-height: 1.5; }
-    .insight-card p span { color: var(--income-green); font-weight: 600; }
-    .btn-outline { background: transparent; border: 1px solid var(--luna-primary); color: var(--luna-primary); width: 100%; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
+    .insight-card p { font-size: 0.9rem; color: var(--text-muted); margin: 10px 0 0 0; line-height: 1.5; }
 
     /* INPUT PAGE */
     .page-header { text-align: center; margin-bottom: 30px; position: relative;}
@@ -159,26 +134,23 @@
 
     /* SETTINGS PAGE */
     .settings-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 30px; }
-    
     .control-card { background: var(--bg-surface); border-radius: 20px; padding: 20px; border: 1px solid var(--border-color); margin-bottom: 20px; position: relative;}
     .control-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
     .control-icon { font-size: 2rem; color: var(--bg-surface-light); position: absolute; right: 20px; top: 20px; opacity: 0.5;}
     
-    .btn-add-account { background: var(--luna-primary); color: var(--bg-dark); padding: 10px 20px; border-radius: 12px; font-weight: 600; font-size: 0.85rem; border: none; display: flex; align-items: center; gap: 8px; cursor: pointer;}
     .acc-item { background: var(--bg-surface-light); border-radius: 12px; padding: 15px; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
     .acc-item i { background: #333; padding: 10px; border-radius: 8px; color: var(--luna-primary); }
     
     .epoch-box { background: var(--bg-dark); padding: 15px; border-radius: 12px; margin: 15px 0; }
     .epoch-box .label-caps { margin-bottom: 5px; }
     .epoch-val { font-size: 1.5rem; font-weight: 700; }
-    .italic-note { font-size: 0.75rem; font-style: italic; color: var(--text-muted); margin-bottom: 15px; display: block;}
+    .italic-note { font-size: 0.75rem; font-style: italic; color: var(--text-muted); display: block;}
     
     .frontier-item { margin-bottom: 20px; }
     .frontier-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     .frontier-title { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 0.9rem; }
     .frontier-title i { background: var(--bg-surface-light); padding: 8px; border-radius: 8px; color: var(--text-muted); }
     .status-active { color: var(--income-green); font-size: 0.75rem; font-weight: 600; }
-    .status-warning { color: var(--expense-red); font-size: 0.75rem; font-weight: 600; }
 
     .target-item { background: var(--bg-surface-light); border-radius: 16px; padding: 15px; display: flex; gap: 15px; margin-bottom: 15px;}
     .target-icon { width: 60px; height: 60px; background: #111; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-muted);}
@@ -193,7 +165,6 @@
     .nav-item { color: var(--text-muted); font-size: 0.7rem; font-weight: 600; letter-spacing: 1px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: 0.3s; text-transform: uppercase;}
     .nav-item i { font-size: 1.2rem; }
     .nav-item.active { color: var(--luna-primary); }
-    
     .nav-input-btn { background: var(--luna-primary-dark); color: var(--luna-primary); padding: 12px 25px; border-radius: 16px; margin-top: -5px; }
   </style>
 </head>
@@ -218,10 +189,6 @@
           <i class="fa-solid fa-circle-exclamation"></i> Invalid credentials.
         </p>
         <button class="btn-luna" onclick="login()">Masuk <i class="fa-solid fa-arrow-right"></i></button>
-      </div>
-      <div style="margin-top: 40px; text-align: center; color: var(--text-muted); font-size: 0.8rem;">
-        Forgot access credentials?<br><br>
-        <i class="fa-solid fa-fingerprint" style="font-size: 1.5rem; opacity: 0.5;"></i> &nbsp; <span class="label-caps">Biometric Ready</span>
       </div>
       <div style="position: absolute; bottom: 30px; font-size: 0.6rem; color: #555; text-transform: uppercase; letter-spacing: 2px;">
         Encrypted: AES-256 &nbsp;•&nbsp; Node: US-EAST-1
@@ -273,8 +240,8 @@
         </div>
         <div class="quick-input-grid">
           <div class="qi-btn" onclick="quickInput('Pengeluaran', 'Dining & Gastronomy', 50000)"><i class="fa-solid fa-utensils"></i> +50k Makan</div>
-          <div class="qi-btn" onclick="quickInput('Pengeluaran', 'Transport & Logistics', 20000)"><i class="fa-solid fa-car"></i> +20k Transport</div>
           <div class="qi-btn" onclick="quickInput('Pengeluaran', 'Entertainment', 100000)"><i class="fa-solid fa-bag-shopping"></i> +100k Retail</div>
+          <div class="qi-btn" onclick="quickInput('Pemasukan', 'Lainnya', 50000)"><i class="fa-solid fa-money-bill"></i> +50k Income</div>
           <div class="qi-btn custom" onclick="navTo('page-input')"><i class="fa-solid fa-plus"></i> Custom</div>
         </div>
 
@@ -288,7 +255,6 @@
         <div class="card insight-card">
           <div class="label-caps" style="color:#fff;">Smart Insight</div>
           <p>Nasihat Harian: <br><span style="color:var(--luna-primary); font-style:italic;" id="nasihatHarian">Memuat...</span></p>
-          <button class="btn-outline">Optimize Spending</button>
         </div>
       </div>
 
@@ -378,16 +344,15 @@
       <div id="page-settings" class="page">
         <div class="label-caps" style="color:var(--luna-primary); margin-bottom: 5px;">System Configuration</div>
         <h1 style="font-size: 2rem; margin-bottom: 15px;">Control Layer</h1>
-        <p class="settings-desc">Adjust your financial trajectory by fine-tuning account parameters, budget ceilings, and celestial savings goals.</p>
+        <p class="settings-desc">Adjust your financial trajectory by monitoring account parameters, budget ceilings, and celestial savings goals.</p>
 
         <div class="control-card">
           <i class="fa-solid fa-building-columns control-icon"></i>
           <div class="control-header">
             <div>
               <div class="label-caps" style="color:#fff; font-size:0.85rem;">Account Management</div>
-              <p style="font-size:0.75rem; color:var(--text-muted); margin-top:5px; max-width: 60%;">Manage your liquidity sources and physical assets.</p>
+              <p style="font-size:0.75rem; color:var(--text-muted); margin-top:5px; max-width: 80%;">Active liquidity sources based on your secure vault data.</p>
             </div>
-            <button class="btn-add-account"><i class="fa-solid fa-plus"></i> Add Account</button>
           </div>
           <div id="setAkunList"></div>
         </div>
@@ -402,13 +367,11 @@
             <div class="label-caps">Starting Liquidity</div>
             <div class="epoch-val" id="setEpochBal">$ 0.00</div>
           </div>
-          <span class="italic-note">"Setting the epoch balance provides a zero-point for all subsequent growth calculations."</span>
-          <button class="btn-outline" style="border-color:#444; color:#fff;">Update Baseline</button>
+          <span class="italic-note">"Zero-point for all subsequent growth calculations."</span>
         </div>
 
         <div class="label-caps" style="color:#fff; font-size:0.85rem; margin-top:30px;">Allocation Frontiers</div>
-        <p style="font-size:0.75rem; color:var(--text-muted); margin:5px 0 15px 0;">Set constraints per category for this celestial cycle.</p>
-        <div class="link-primary" style="color:var(--income-green); margin-bottom: 20px;"><i class="fa-regular fa-square-plus"></i> Define New Category</div>
+        <p style="font-size:0.75rem; color:var(--text-muted); margin:5px 0 15px 0;">Constraints per category for this celestial cycle.</p>
         <div id="setBudgetList"></div>
 
         <div class="label-caps" style="color:#fff; font-size:0.85rem; margin-top:30px; display:flex; align-items:center; gap:10px;">
@@ -436,20 +399,16 @@
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxEYyeciYAFZ3Jo2vMUdTObOA0bNi4Eqd7jMdzlIRXsf_WMtnFeC64kBd-8bgJ66I5mjA/exec'; 
     const PIN_BENAR = "123456"; 
 
-    // Formatting
     const fmtRp = (num) => new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(Math.abs(num));
     const tglSistem = new Date().toISOString().split('T')[0];
     document.getElementById('inpTanggal').value = tglSistem;
 
-    // Data State
     let gTransaksi = [], gAkun = [], gBudget = [], gTarget = [];
     let curFilter = 'All';
 
-    // Nasihat
     const nasihat = ["Hindari sifat malas dan kikir.", "Buat uang bekerja untukmu, bukan sebaliknya.", "Investasi terbaik ada pada dirimu."];
     document.getElementById('nasihatHarian').innerText = nasihat[new Date().getDate() % nasihat.length];
 
-    // Auth Logic
     function login() {
       const p = document.getElementById('vaultPin').value;
       if (p === PIN_BENAR) {
@@ -461,7 +420,6 @@
       }
     }
 
-    // Nav Logic
     function navTo(pageId, el) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
@@ -472,7 +430,6 @@
       window.scrollTo(0,0);
     }
 
-    // Fetch & Process
     async function muatData() {
       try {
         const res = await fetch(SCRIPT_URL);
@@ -504,7 +461,6 @@
 
       let actHtml = ''; let actCount = 0;
 
-      // Loop dari belakang (terbaru)
       for(let i=gTransaksi.length-1; i>=1; i--) {
         const t = gTransaksi[i];
         const tTgl = new Date(t[1]);
@@ -519,7 +475,6 @@
           else { outBln += nom; budgPakai[kat] = (budgPakai[kat]||0) + nom; }
         }
 
-        // Render Top 3 Recent Activity for Dashboard
         if(actCount < 3) {
           const icon = jenis === 'Pemasukan' ? 'fa-money-bill-trend-up' : 'fa-basket-shopping';
           const col = jenis === 'Pemasukan' ? 'var(--income-green)' : 'var(--text-main)';
@@ -536,7 +491,6 @@
         }
       }
 
-      // Update Dashboard Net Worth & Summary
       let totNW = 0;
       let selAkun = document.getElementById('inpAkun'); selAkun.innerHTML = '';
       for(const [n, s] of Object.entries(saldoMap)) {
@@ -550,7 +504,6 @@
       document.getElementById('dashActivity').innerHTML = actHtml || '<p style="color:#888; font-size:0.8rem;">No activity.</p>';
       document.getElementById('setEpochBal').innerText = `Rp ${fmtRp(totNW)}`;
 
-      // Budget Alert Logic (Find closest to limit)
       let highestPct = 0, alertKat = '-', alertLimit = 0;
       for(let i=1; i<gBudget.length; i++) {
         const kat = gBudget[i][1], lim = Number(gBudget[i][2]);
@@ -565,13 +518,11 @@
       document.getElementById('alertBar').style.width = `${Math.min(highestPct, 100)}%`;
     }
 
-    // Render History Grouped by Date
     function renderHistory() {
       const kw = document.getElementById('searchHistory').value.toLowerCase();
       let html = '';
-      
-      // Grouping
       let groups = {};
+      
       for(let i=gTransaksi.length-1; i>=1; i--) {
         const t = gTransaksi[i];
         if(curFilter === 'Income' && t[2] !== 'Pemasukan') continue;
@@ -615,22 +566,19 @@
       renderHistory();
     }
 
-    // Render Settings Page
     function renderSettings() {
-      // Accounts
       let accHtml = '';
       for(let i=1; i<gAkun.length; i++) {
         accHtml += `<div class="acc-item"><i class="fa-solid fa-wallet"></i><div><div style="font-weight:600; font-size:0.9rem;">${gAkun[i][1]}</div><div style="font-size:0.7rem; color:var(--text-muted);">Linked Account</div></div></div>`;
       }
       document.getElementById('setAkunList').innerHTML = accHtml;
 
-      // Budgets (Frontiers)
       let budgHtml = '';
       for(let i=1; i<gBudget.length; i++) {
         budgHtml += `
           <div class="frontier-item">
             <div class="frontier-header">
-              <div class="frontier-title"><i class="fa-solid fa-utensils"></i> ${gBudget[i][1]}</div>
+              <div class="frontier-title"><i class="fa-solid fa-layer-group"></i> ${gBudget[i][1]}</div>
               <div class="status-active">Active</div>
             </div>
             <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-muted); margin-bottom:5px;"><span>Limit</span><span>Rp ${fmtRp(gBudget[i][2])}</span></div>
@@ -639,7 +587,6 @@
       }
       document.getElementById('setBudgetList').innerHTML = budgHtml;
 
-      // Targets
       let tgtHtml = '';
       for(let i=1; i<gTarget.length; i++) {
         const lim = Number(gTarget[i][2]), terkumpul = Number(gTarget[i][3]);
@@ -660,17 +607,21 @@
       document.getElementById('setGoalList').innerHTML = tgtHtml;
     }
 
-    // Quick Input
     function quickInput(jns, kat, nom) {
       document.getElementById('inpJenis').value = jns;
       updateKatDropdown();
-      document.getElementById('inpKat').value = kat;
+      
+      let katSelect = document.getElementById('inpKat');
+      let katExists = Array.from(katSelect.options).some(opt => opt.value === kat);
+      
+      if(katExists) { katSelect.value = kat; } 
+      else if(katSelect.options.length > 0) { katSelect.selectedIndex = 0; }
+      
       document.getElementById('inpNominal').value = nom;
       document.getElementById('inpKet').value = 'Quick Input';
       navTo('page-input', document.querySelector('.nav-input-btn'));
     }
 
-    // Submit
     async function submitData() {
       const btn = document.getElementById('btnSimpan');
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...'; btn.disabled = true;
