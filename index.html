@@ -1,655 +1,577 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>LUNA FINANCE</title>
-  
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-  <style>
-    :root {
-      --bg-dark: #121212;
-      --bg-surface: #1E1E1E;
-      --bg-surface-light: #2A2A2A;
-      --luna-primary: #9BA8DB; 
-      --luna-primary-dark: #2B3253;
-      --text-main: #FFFFFF;
-      --text-muted: #888888;
-      --income-green: #4CAF50;
-      --expense-red: #FF8A80;
-      --border-color: rgba(255, 255, 255, 0.08);
-      --font-family: 'Inter', sans-serif;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family); -webkit-tap-highlight-color: transparent; }
-    body { background-color: var(--bg-dark); color: var(--text-main); display: flex; justify-content: center; }
-    .app-container { width: 100%; max-width: 480px; min-height: 100vh; background-color: var(--bg-dark); position: relative; overflow-x: hidden; }
-
-    h1, h2, h3 { font-weight: 600; letter-spacing: -0.5px; }
-    .label-caps { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 600; }
-
-    /* AUTH SCREEN */
-    #screen-auth { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, #1A1C23 0%, var(--bg-dark) 100%); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; }
-    .auth-logo { width: 80px; height: 80px; background: var(--luna-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 30px; box-shadow: 0 0 40px rgba(155, 168, 219, 0.2);}
-    .auth-title { font-size: 1.8rem; font-weight: 800; letter-spacing: 4px; color: var(--luna-primary); margin-bottom: 5px; }
-    .auth-subtitle { font-size: 0.8rem; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 50px; text-transform: uppercase; }
-    .auth-card { background: var(--bg-surface); padding: 30px; border-radius: 24px; width: 100%; border: 1px solid var(--border-color); }
-    .vault-input-area { background: #151515; border-radius: 12px; padding: 15px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
-    .vault-input-area i { color: var(--text-muted); }
-    .vault-input { background: transparent; border: none; color: var(--text-main); width: 100%; outline: none; font-size: 1.2rem; letter-spacing: 5px; font-family: monospace;}
-    .btn-luna { background: var(--luna-primary); color: var(--bg-dark); width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.2s;}
-    .btn-luna-sm { background: var(--luna-primary-dark); color: var(--luna-primary); padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.8rem; cursor: pointer; border: 1px solid var(--luna-primary); }
-
-    /* MAIN NAV */
-    #screen-main { display: none; padding-bottom: 90px; }
-    .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid var(--border-color); margin-bottom: 15px;}
-    .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; letter-spacing: 2px; color: var(--luna-primary);}
-    .nav-brand i { font-size: 1.5rem; }
-    .nav-actions { font-size: 0.95rem; font-weight: 600; color: var(--text-main); letter-spacing: 1px; display: flex; align-items: center; gap: 12px; }
-    .header-date { font-size: 0.65rem; color: var(--text-muted); font-weight: 500; letter-spacing: 0.5px; margin-top: 3px; text-transform: none;}
-    .btn-fs { cursor: pointer; color: var(--text-muted); transition: 0.2s; font-size: 1.2rem; }
-    .btn-fs:hover { color: var(--luna-primary); }
-
-    /* PAGES */
-    .page { display: none; padding: 0 24px; animation: fadeIn 0.3s ease; }
-    .page.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* DASHBOARD */
-    .net-worth-amount { font-size: 3rem; font-weight: 700; margin: 5px 0 25px 0; color: var(--text-main); }
-    .net-worth-amount span { color: var(--luna-primary); }
-    
-    .card { background: var(--bg-surface); border-radius: 20px; padding: 20px; border: 1px solid var(--border-color); margin-bottom: 20px; }
-    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
-    .summary-val { font-size: 1.4rem; font-weight: 700; margin-top: 5px; }
-    .text-in { color: var(--income-green); }
-
-    .dash-acc-card { background: var(--bg-surface-light); border-radius: 16px; padding: 15px 20px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color);}
-    .dash-acc-card h4 { font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
-    .dash-acc-card p { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
-    .dash-acc-val { font-size: 1.1rem; font-weight: 700; color: var(--luna-primary); }
-
-    /* FIX: HUTANG CARD NUMPUK */
-    .hutang-card { background: linear-gradient(135deg, #2b1414, #1a0a0a); border-radius: 16px; padding: 20px; border: 1px solid rgba(255, 138, 128, 0.15); margin-bottom: 20px; }
-    .hutang-header { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 15px; gap: 6px; }
-    .hutang-title { font-weight: 600; font-size: 0.8rem; color: var(--expense-red); text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px;}
-    .hutang-sisa { font-size: 1.6rem; font-weight: 700; color: #fff; line-height: 1.1; }
-    .progress-bg { background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden; }
-    .progress-fill { height: 100%; background: var(--expense-red); transition: width 0.5s; }
-
-    .target-item { background: var(--bg-surface-light); border-radius: 16px; padding: 15px; display: flex; gap: 15px; margin-bottom: 15px;}
-    .target-icon { width: 60px; height: 60px; background: #111; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-muted);}
-    .target-info { flex: 1; }
-    .target-head { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.95rem; margin-bottom: 10px;}
-    .target-head span:last-child { color: var(--income-green); }
-
-    .section-header { display: flex; justify-content: space-between; align-items: center; margin: 30px 0 15px 0; }
-    .link-primary { color: var(--luna-primary); font-size: 0.8rem; font-weight: 600; letter-spacing: 1px; text-decoration: none; text-transform: uppercase; }
-
-    .activity-list { display: flex; flex-direction: column; gap: 15px; }
-    .activity-item { display: flex; align-items: center; justify-content: space-between; }
-    .act-left { display: flex; align-items: center; gap: 15px; }
-    .act-icon { width: 40px; height: 40px; background: var(--bg-surface-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 1.1rem; }
-    .act-info h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 3px; }
-    .act-info p { font-size: 0.75rem; color: var(--text-muted); }
-    .act-amount { font-weight: 600; font-size: 0.95rem; }
-
-    .insight-card { background: linear-gradient(135deg, var(--bg-surface) 0%, #1a1a2e 100%); border-left: 3px solid var(--luna-primary); margin-top: 20px;}
-    .insight-card p { font-size: 0.9rem; color: var(--text-muted); margin: 10px 0 0 0; line-height: 1.5; }
-
-    /* INPUT PAGE */
-    .page-header { text-align: center; margin-bottom: 30px; position: relative;}
-    .page-title { font-size: 1.8rem; font-weight: 700; margin-top: 5px; }
-    .page-title::after { content:''; display:block; width: 40px; height: 3px; background: var(--luna-primary); margin: 10px auto 0 auto; border-radius: 2px;}
-    
-    .amount-input-area { margin-bottom: 30px; display: flex; align-items: baseline; gap: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;}
-    .currency { font-size: 1.2rem; font-weight: 600; color: var(--luna-primary); }
-    .amount-input { background: transparent; border: none; color: var(--text-main); font-size: 3.5rem; font-weight: 700; width: 100%; outline: none; }
-
-    .form-card { background: var(--bg-surface); padding: 5px 20px; border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 15px; }
-    .form-group { padding: 15px 0; border-bottom: 1px solid var(--border-color); position: relative;}
-    .form-group:last-child { border-bottom: none; }
-    .form-group label { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; }
-    .input-row { display: flex; align-items: center; gap: 15px; }
-    .input-row i { color: var(--income-green); width: 20px; text-align: center; }
-    .input-row select, .input-row input { background: transparent; border: none; color: var(--text-main); font-size: 1rem; font-weight: 500; width: 100%; outline: none; appearance: none; }
-    .chevron-down { position: absolute; right: 0; top: 50%; color: var(--text-muted); pointer-events: none;}
-
-    /* HISTORY PAGE */
-    .search-bar { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
-    .search-bar input { background: transparent; border: none; color: var(--text-main); font-size: 0.95rem; width: 100%; outline: none; }
-    .filter-chips { display: flex; gap: 10px; margin-bottom: 30px; overflow-x: auto; padding-bottom: 5px;}
-    .chip { background: var(--bg-surface); border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); cursor: pointer; white-space: nowrap;}
-    .chip.active { background: var(--luna-primary); color: var(--bg-dark); border-color: var(--luna-primary); }
-
-    .history-group-title { font-size: 1rem; font-weight: 500; color: var(--text-main); margin: 25px 0 15px 0; }
-    .history-card { background: var(--bg-surface); border-radius: 20px; padding: 5px 20px; border: 1px solid var(--border-color); }
-    .history-card .activity-item { padding: 15px 0; border-bottom: 1px solid var(--border-color); }
-    .history-card .activity-item:last-child { border-bottom: none; }
-    .status-text { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; text-align: right; margin-top: 4px;}
-
-    /* SETTINGS PAGE & FORMS */
-    .settings-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 30px; }
-    .control-card { background: var(--bg-surface); border-radius: 20px; padding: 20px; border: 1px solid var(--border-color); margin-bottom: 20px; position: relative;}
-    .control-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-    .control-icon { font-size: 2rem; color: var(--bg-surface-light); position: absolute; right: 20px; top: 20px; opacity: 0.5;}
-    
-    .acc-item { background: var(--bg-surface-light); border-radius: 12px; padding: 15px; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
-    .acc-item i { background: #333; padding: 10px; border-radius: 8px; color: var(--luna-primary); }
-    
-    .frontier-item { margin-bottom: 20px; }
-    .frontier-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .frontier-title { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 0.9rem; }
-    .frontier-title i { background: var(--bg-surface-light); padding: 8px; border-radius: 8px; color: var(--text-muted); }
-    
-    /* SETTINGS HIDDEN FORMS */
-    .inline-form { background: var(--bg-surface-light); border: 1px solid var(--luna-primary-dark); padding: 15px; border-radius: 12px; margin-bottom: 15px; display: none; }
-    .inline-form.active { display: block; animation: fadeIn 0.3s ease;}
-    .inline-input { width: 100%; background: var(--bg-dark); border: 1px solid var(--border-color); color: #fff; padding: 10px; border-radius: 8px; margin-bottom: 10px; outline: none; }
-
-    /* BOTTOM NAV */
-    .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(30, 30, 30, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; align-items: center; padding: 15px 10px 25px 10px; border-top: 1px solid var(--border-color); z-index: 100; }
-    .nav-item { color: var(--text-muted); font-size: 0.65rem; font-weight: 600; letter-spacing: 1px; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; flex: 1; }
-    .nav-item i { font-size: 1.3rem; transition: transform 0.3s ease; }
-    .nav-item.active { color: var(--luna-primary); }
-    .nav-item.active i { transform: translateY(-4px); }
-  </style>
-</head>
-<body>
-
-  <div class="app-container">
-    
-    <div id="screen-auth">
-      <div class="auth-logo"><i class="fa-solid fa-cloud fa-2x" style="color:var(--bg-dark);"></i></div>
-      <div class="auth-title">LUNA FINANCE</div>
-      <div class="auth-subtitle">Authentication Layer</div>
-      <div class="auth-card">
-        <h2>Secure Access</h2>
-        <p>Please enter your vault password to continue.</p>
-        <div class="label-caps" style="margin-bottom: 10px;">Vault Access Key</div>
-        <div class="vault-input-area">
-          <i class="fa-solid fa-lock"></i>
-          <input type="password" id="vaultPin" class="vault-input" placeholder="••••••">
-        </div>
-        <p id="authError" style="color: var(--expense-red); font-size: 0.8rem; display: none; margin-top: -10px;">
-          <i class="fa-solid fa-circle-exclamation"></i> Invalid credentials.
-        </p>
-        <button class="btn-luna" onclick="login()">Masuk <i class="fa-solid fa-arrow-right"></i></button>
-      </div>
-    </div>
-
-    <div id="screen-main">
-      
-      <div class="top-nav">
-        <div class="nav-brand">
-          <div><i class="fa-solid fa-cloud"></i> LUNA <div class="header-date" id="headerDate">Memuat tanggal...</div></div>
-        </div>
-        <div class="nav-actions">
-          <span>Umar Taufik</span>
-          <i class="fa-solid fa-expand btn-fs" id="fs-icon" onclick="toggleFullScreen()" title="Full Screen"></i>
-        </div>
-      </div>
-
-      <div id="page-dashboard" class="page active">
-        <div class="label-caps">Total Net Worth</div>
-        <div class="net-worth-amount" id="netWorth">IDR 0</div>
-
-        <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div class="label-caps" style="color:#fff;">Monthly Summary</div>
-            <i class="fa-solid fa-chart-simple" style="color:var(--luna-primary);"></i>
-          </div>
-          <div class="summary-grid">
-            <div><div class="label-caps">Income</div><div class="summary-val text-in" id="sumIncome">+IDR 0</div></div>
-            <div><div class="label-caps">Expenses</div><div class="summary-val" id="sumExpense">IDR 0</div></div>
-          </div>
-        </div>
-
-        <div class="section-header"><div class="label-caps" style="color:#fff;">Liquidity Sources</div></div>
-        <div id="dashAkunList"></div>
-        <div id="dashHutangList" style="margin-top: 15px;"></div>
-
-        <div class="label-caps" style="color:#fff; font-size:0.85rem; margin-top:30px; display:flex; align-items:center; gap:10px;">
-          <i class="fa-solid fa-circle-star" style="color:var(--income-green); font-size:1.2rem;"></i> Financial Targets
-        </div>
-        <p style="font-size:0.75rem; color:var(--text-muted); margin:5px 0 15px 0; margin-left: 28px;">Long-range goals for capital accumulation.</p>
-        <div id="setGoalList"></div>
-
-        <div class="section-header">
-          <div class="label-caps" style="color:#fff;">Recent Activity</div>
-          <a href="#" class="link-primary" onclick="navTo('page-history', document.getElementById('nav-hist'))">View All</a>
-        </div>
-        <div class="card activity-list" id="dashActivity"></div>
-
-        <div class="card insight-card">
-          <div class="label-caps" style="color:#fff;">Smart Insight</div>
-          <p>Nasihat Harian: <br><span style="color:var(--luna-primary); font-style:italic;" id="nasihatHarian">Memuat...</span></p>
-        </div>
-      </div>
-
-      <div id="page-input" class="page">
-        <div class="page-header">
-          <div class="label-caps" style="color:var(--income-green);">Celestial Ledger</div>
-          <h1 class="page-title">Record Entry</h1>
-        </div>
-        <div class="label-caps" style="margin-bottom: 10px;">Total Amount</div>
-        <div class="amount-input-area">
-          <span class="currency">IDR</span><input type="number" id="inpNominal" class="amount-input" placeholder="0">
-        </div>
-
-        <form id="formInput" onsubmit="event.preventDefault(); submitData('tambahTransaksi');">
-          <div class="form-card">
-            <div class="form-group">
-              <label>Jenis</label>
-              <div class="input-row">
-                <i class="fa-solid fa-arrow-right-arrow-left"></i>
-                <select id="inpJenis" onchange="updateKatDropdown()"><option>Pengeluaran</option><option>Pemasukan</option></select>
-                <i class="fa-solid fa-chevron-down chevron-down"></i>
-              </div>
-            </div>
-            <div class="form-group"><label>Category</label><div class="input-row"><i class="fa-solid fa-layer-group"></i><select id="inpKat"></select><i class="fa-solid fa-chevron-down chevron-down"></i></div></div>
-            <div class="form-group"><label>Account</label><div class="input-row"><i class="fa-solid fa-wallet"></i><select id="inpAkun"></select><i class="fa-solid fa-chevron-down chevron-down"></i></div></div>
-          </div>
-          <div class="form-card"><div class="form-group"><label>Effective Date</label><div class="input-row"><i class="fa-regular fa-calendar"></i><input type="date" id="inpTanggal"></div></div></div>
-          <div class="form-card"><div class="form-group"><label>Reference Note</label><div class="input-row"><i class="fa-solid fa-pen-to-square" style="color:var(--expense-red);"></i><input type="text" id="inpKet" placeholder="Entry missing note..."></div></div></div>
-          <button type="submit" class="btn-luna" id="btnSimpanTrans"><i class="fa-solid fa-floppy-disk"></i> Simpan Transaksi</button>
-        </form>
-      </div>
-
-      <div id="page-history" class="page">
-        <h1 style="font-size: 2rem; margin-bottom: 5px;">History</h1>
-        <div class="label-caps" style="margin-bottom: 25px;">Transaction Management</div>
-        <div class="search-bar"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="searchHistory" placeholder="Search transactions..." onkeyup="renderHistory()"></div>
-        <div class="filter-chips">
-          <div class="chip active" onclick="setFilter('All', this)">All Time</div>
-          <div class="chip" onclick="setFilter('Income', this)">Income</div>
-          <div class="chip" onclick="setFilter('Expenses', this)">Expenses</div>
-        </div>
-        <div id="historyContainer"></div>
-      </div>
-
-      <div id="page-settings" class="page">
-        <div class="label-caps" style="color:var(--luna-primary); margin-bottom: 5px;">System Configuration</div>
-        <h1 style="font-size: 2rem; margin-bottom: 15px;">Control Layer</h1>
-        <p class="settings-desc">Monitoring & adding parameters for your financial system.</p>
-
-        <div class="control-card">
-          <i class="fa-solid fa-building-columns control-icon"></i>
-          <div class="control-header">
-            <div class="label-caps" style="color:#fff; font-size:0.85rem;">Account Management</div>
-            <button class="btn-luna-sm" onclick="toggleForm('formNewAccount')">+ Add</button>
-          </div>
-          
-          <form id="formNewAccount" class="inline-form" onsubmit="event.preventDefault(); submitData('tambahAkun');">
-            <label class="label-caps">Nama Akun Baru</label>
-            <input type="text" id="newAkunName" class="inline-input" required placeholder="Contoh: BCA">
-            <label class="label-caps">Saldo Awal (Rp)</label>
-            <input type="number" id="newAkunSaldo" class="inline-input" required placeholder="0">
-            <button type="submit" class="btn-luna btn-luna-sm" id="btnSimpanAkun" style="width:100%; margin-top:5px;">Simpan Akun</button>
-          </form>
-
-          <div id="setAkunList"></div>
-        </div>
-
-        <div class="control-card">
-          <i class="fa-solid fa-layer-group control-icon"></i>
-          <div class="control-header">
-            <div class="label-caps" style="color:#fff; font-size:0.85rem;">Allocation Frontiers (Budget)</div>
-            <button class="btn-luna-sm" onclick="toggleForm('formNewBudget')">+ Add</button>
-          </div>
-
-          <form id="formNewBudget" class="inline-form" onsubmit="event.preventDefault(); submitData('tambahBudget');">
-            <label class="label-caps">Nama Kategori Budget</label>
-            <input type="text" id="newBudgetName" class="inline-input" required placeholder="Contoh: Belanja">
-            <label class="label-caps">Limit Sebulan (Rp)</label>
-            <input type="number" id="newBudgetLimit" class="inline-input" required placeholder="0">
-            <button type="submit" class="btn-luna btn-luna-sm" id="btnSimpanBudget" style="width:100%; margin-top:5px;">Simpan Budget</button>
-          </form>
-
-          <div id="setBudgetList"></div>
-        </div>
-
-        <div class="control-card">
-          <i class="fa-solid fa-shield-halved control-icon"></i>
-          <div class="control-header">
-            <div class="label-caps" style="color:#fff; font-size:0.85rem;">Security & Access</div>
-            <button class="btn-luna-sm" onclick="toggleForm('formChangePin')">Ubah PIN</button>
-          </div>
-
-          <form id="formChangePin" class="inline-form" onsubmit="event.preventDefault(); ubahPIN();">
-            <label class="label-caps">PIN Lama</label>
-            <input type="password" id="oldPin" class="inline-input" required placeholder="••••••">
-            <label class="label-caps">PIN Baru</label>
-            <input type="password" id="newPin" class="inline-input" required placeholder="••••••">
-            <button type="submit" class="btn-luna btn-luna-sm" style="width:100%; margin-top:5px;">Update PIN</button>
-          </form>
-          <p style="font-size:0.75rem; color:var(--text-muted);">Ubah Vault Access Key untuk login. Disimpan secara lokal di perangkat Anda.</p>
-        </div>
-
-      </div>
-
-      <div class="bottom-nav">
-        <div class="nav-item active" id="nav-dash" onclick="navTo('page-dashboard', this)"><i class="fa-solid fa-border-all"></i> Dashboard</div>
-        <div class="nav-item" id="nav-inp" onclick="navTo('page-input', this)"><i class="fa-solid fa-circle-plus"></i> Input</div>
-        <div class="nav-item" id="nav-hist" onclick="navTo('page-history', this)"><i class="fa-solid fa-clock-rotate-left"></i> History</div>
-        <div class="nav-item" id="nav-set" onclick="navTo('page-settings', this)"><i class="fa-solid fa-gear"></i> Settings</div>
-      </div>
-
-    </div>
-  </div>
-
-  <script>
-    // --- GANTI URL API DI BAWAH INI ---
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxEYyeciYAFZ3Jo2vMUdTObOA0bNi4Eqd7jMdzlIRXsf_WMtnFeC64kBd-8bgJ66I5mjA/exec'; 
-    
-    // Sistem PIN LocalStorage
-    let myPin = localStorage.getItem('luna_pin') || "123456";
-
-    const fmtRp = (num) => new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(Math.abs(num));
-    const tglSistem = new Date().toISOString().split('T')[0];
-    document.getElementById('inpTanggal').value = tglSistem;
-    document.getElementById('headerDate').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
-    let gTransaksi = [], gAkun = [], gBudget = [], gTarget = [];
-    let curFilter = 'All';
-    let globalBudgPakai = {}; // Variabel global buat nyimpen data pemakaian budget biar bisa dibaca di Settings
-
-    const nasihat = ["Hindari sifat malas dan kikir.", "Buat uang bekerja untukmu, bukan sebaliknya.", "Investasi terbaik ada pada dirimu."];
-    document.getElementById('nasihatHarian').innerText = nasihat[new Date().getDate() % nasihat.length];
-
-    // TANTANGAN 4: FULLSCREEN JAGO
-    function toggleFullScreen() {
-      const doc = window.document;
-      const docEl = doc.documentElement;
-      const iconFs = document.getElementById('fs-icon');
-
-      const requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-      const cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-
-      if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-        if(requestFullScreen) { 
-          requestFullScreen.call(docEl); 
-          iconFs.classList.replace('fa-expand', 'fa-compress');
-        } else { alert("Browser HP lu nggak support Fullscreen dari web ini bro."); }
-      } else {
-        if(cancelFullScreen) { 
-          cancelFullScreen.call(doc); 
-          iconFs.classList.replace('fa-compress', 'fa-expand');
-        }
-      }
-    }
-
-    function login() {
-      if (document.getElementById('vaultPin').value === myPin) {
-        document.getElementById('screen-auth').style.display = 'none';
-        document.getElementById('screen-main').style.display = 'block';
-        muatData();
-      } else {
-        document.getElementById('authError').style.display = 'block';
-      }
-    }
-
-    // TANTANGAN 3: CHANGE PIN LOGIC
-    function ubahPIN() {
-      const oldP = document.getElementById('oldPin').value;
-      const newP = document.getElementById('newPin').value;
-      if(oldP === myPin) {
-        localStorage.setItem('luna_pin', newP);
-        myPin = newP;
-        alert("Vault Access Key berhasil diperbarui!");
-        document.getElementById('formChangePin').reset();
-        document.getElementById('formChangePin').classList.remove('active');
-      } else {
-        alert("Access denied: PIN Lama salah!");
-      }
-    }
-
-    function toggleForm(id) {
-      document.getElementById(id).classList.toggle('active');
-    }
-
-    function navTo(pageId, el) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      document.getElementById(pageId).classList.add('active');
-      if(el) el.classList.add('active');
-      window.scrollTo(0,0);
-    }
-
-    async function muatData() {
-      try {
-        const res = await fetch(SCRIPT_URL);
-        const data = await res.json();
-        gTransaksi = data.transaksi; gAkun = data.akun; gBudget = data.budget; gTarget = data.target;
-        
-        updateKatDropdown();
-        prosesKalkulasi();
-        renderHistory();
-        renderSettings();
-      } catch (e) { console.error("Load error", e); }
-    }
-
-    function updateKatDropdown() {
-      const jenis = document.getElementById('inpJenis').value;
-      const sel = document.getElementById('inpKat');
-      sel.innerHTML = '';
-      let kats = jenis === 'Pemasukan' ? ["Gaji", "Freelance", "Lainnya"] : gBudget.slice(1).map(b => b[1]);
-      kats.forEach(k => sel.innerHTML += `<option value="${k}">${k}</option>`);
-    }
-
-    function prosesKalkulasi() {
-      let saldoMap = {};
-      for(let i=1; i<gAkun.length; i++) saldoMap[gAkun[i][1]] = Number(gAkun[i][2]);
-
-      let inBln = 0, outBln = 0;
-      globalBudgPakai = {}; // Reset global budget tracker
-      const bln = new Date().getMonth(), thn = new Date().getFullYear();
-
-      let actHtml = ''; let actCount = 0;
-
-      for(let i=gTransaksi.length-1; i>=1; i--) {
-        const t = gTransaksi[i];
-        const tTgl = new Date(t[1]);
-        const jenis = t[2], nom = Number(t[3]), kat = t[4], akun = t[5], ket = t[6];
-
-        if(saldoMap[akun] !== undefined) {
-          if(jenis === 'Pemasukan') saldoMap[akun] += nom; else saldoMap[akun] -= nom;
-        }
-
-        if(tTgl.getMonth() === bln && tTgl.getFullYear() === thn) {
-          if(jenis === 'Pemasukan') inBln += nom; 
-          else { outBln += nom; globalBudgPakai[kat] = (globalBudgPakai[kat]||0) + nom; }
-        }
-
-        if(actCount < 3) {
-          const icon = jenis === 'Pemasukan' ? 'fa-money-bill-trend-up' : 'fa-basket-shopping';
-          const col = jenis === 'Pemasukan' ? 'var(--income-green)' : 'var(--text-main)';
-          const sym = jenis === 'Pemasukan' ? '+' : '-';
-          actHtml += `<div class="activity-item"><div class="act-left"><div class="act-icon"><i class="fa-solid ${icon}"></i></div><div class="act-info"><h4>${ket}</h4><p>${kat}</p></div></div><div class="act-amount" style="color:${col}">${sym}${fmtRp(nom)}</div></div>`;
-          actCount++;
-        }
-      }
-
-      let totNW = 0, selAkun = document.getElementById('inpAkun'); selAkun.innerHTML = '';
-      let dashAkunHtml = '';
-      
-      for(const [n, s] of Object.entries(saldoMap)) {
-        totNW += s;
-        selAkun.innerHTML += `<option value="${n}">${n}</option>`;
-        dashAkunHtml += `<div class="dash-acc-card"><div><h4>${n}</h4><p>Linked Ledger</p></div><div class="dash-acc-val">Rp ${fmtRp(s)}</div></div>`;
-      }
-      
-      document.getElementById('netWorth').innerHTML = `<span>IDR</span> ${fmtRp(totNW)}`;
-      document.getElementById('sumIncome').innerText = `+${fmtRp(inBln)}`;
-      document.getElementById('sumExpense').innerText = `${fmtRp(outBln)}`;
-      document.getElementById('dashActivity').innerHTML = actHtml || '<p style="color:#888; font-size:0.8rem;">No activity.</p>';
-      document.getElementById('dashAkunList').innerHTML = dashAkunHtml;
-
-      // TANTANGAN 1: HUTANG CARD TUMPUK (Fix: Flex Column & Line Height)
-      let dashHutangHtml = '';
-      for(let i=1; i<gBudget.length; i++) {
-        const kat = gBudget[i][1], lim = Number(gBudget[i][2]);
-        if(kat.toLowerCase().includes('hutang')) {
-          const pak = globalBudgPakai[kat]||0;
-          const pct = lim > 0 ? (pak/lim)*100 : 0;
-          dashHutangHtml += `
-            <div class="hutang-card">
-              <div class="hutang-header">
-                <div class="hutang-title"><i class="fa-solid fa-triangle-exclamation"></i> Target Pembayaran: ${kat}</div>
-                <div class="hutang-sisa">Rp ${fmtRp(Math.max(lim - pak, 0))}</div>
-              </div>
-              <div style="font-size:0.7rem; color:var(--text-muted); margin-bottom:8px;">Sisa target berjalan</div>
-              <div class="progress-bg"><div class="progress-fill" style="width:${Math.min(pct, 100)}%;"></div></div>
-            </div>`;
-        }
-      }
-      document.getElementById('dashHutangList').innerHTML = dashHutangHtml;
-    }
-
-    function renderHistory() {
-      const kw = document.getElementById('searchHistory').value.toLowerCase();
-      let html = ''; let groups = {};
-      
-      for(let i=gTransaksi.length-1; i>=1; i--) {
-        const t = gTransaksi[i];
-        if(curFilter === 'Income' && t[2] !== 'Pemasukan') continue;
-        if(curFilter === 'Expenses' && t[2] !== 'Pengeluaran') continue;
-        if(kw && !(t[6]+" "+t[4]+" "+t[5]).toLowerCase().includes(kw)) continue;
-
-        const dStr = new Date(t[1]).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'});
-        if(!groups[dStr]) groups[dStr] = [];
-        groups[dStr].push(t);
-      }
-
-      for(const [date, items] of Object.entries(groups)) {
-        html += `<div class="history-group-title">${date}</div><div class="history-card">`;
-        items.forEach(t => {
-          const isInc = t[2] === 'Pemasukan';
-          const icon = isInc ? 'fa-wallet' : 'fa-cart-shopping';
-          const col = isInc ? 'var(--income-green)' : 'var(--expense-red)';
-          html += `<div class="activity-item" style="display:flex; justify-content:space-between; align-items:center;"><div class="act-left"><div class="act-icon"><i class="fa-solid ${icon}"></i></div><div class="act-info"><h4>${t[6]}</h4><p>${t[4]} • ${t[5]}</p></div></div><div style="text-align:right;"><div class="act-amount" style="color:${col}">${isInc?'+':'-'} ${fmtRp(t[3])}</div><div class="status-text" style="color:${isInc?'var(--income-green)':'var(--text-muted)'}">${isInc?'CLEARED':'PENDING'}</div></div></div>`;
-        });
-        html += `</div>`;
-      }
-      document.getElementById('historyContainer').innerHTML = html || '<p style="color:#888; text-align:center; padding:20px;">No records found.</p>';
-    }
-
-    function setFilter(f, el) { curFilter = f; document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); el.classList.add('active'); renderHistory(); }
-
-    function renderSettings() {
-      // Akun Render
-      let accHtml = '';
-      for(let i=1; i<gAkun.length; i++) {
-        accHtml += `<div class="acc-item"><i class="fa-solid fa-wallet"></i><div><div style="font-weight:600; font-size:0.9rem;">${gAkun[i][1]}</div><div style="font-size:0.7rem; color:var(--text-muted);">Linked Account</div></div></div>`;
-      }
-      document.getElementById('setAkunList').innerHTML = accHtml;
-
-      // TANTANGAN 2: BUDGET (FRONTIER) BAR BERGERAK SESUAI DATA
-      let budgHtml = '';
-      for(let i=1; i<gBudget.length; i++) {
-        const kat = gBudget[i][1];
-        if(kat.toLowerCase().includes('hutang')) continue; 
-        
-        const lim = Number(gBudget[i][2]);
-        const pak = globalBudgPakai[kat] || 0;
-        const pct = lim > 0 ? (pak/lim)*100 : 0;
-        
-        // Warna Dinamis
-        let barColor = 'var(--luna-primary)';
-        let statusText = 'Active'; let statusColor = 'var(--income-green)';
-        if(pct >= 100) { barColor = 'var(--expense-red)'; statusText = 'Overbudget'; statusColor = 'var(--expense-red)'; }
-        else if (pct >= 80) { barColor = '#f39c12'; statusText = 'Warning'; statusColor = '#f39c12'; }
-
-        budgHtml += `
-          <div class="frontier-item">
-            <div class="frontier-header">
-              <div class="frontier-title"><i class="fa-solid fa-layer-group"></i> ${kat}</div>
-              <div style="color:${statusColor}; font-size:0.75rem; font-weight:600;">${statusText}</div>
-            </div>
-            <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-muted); margin-bottom:5px;">
-              <span>Terpakai: Rp ${fmtRp(pak)}</span><span>Limit: Rp ${fmtRp(lim)}</span>
-            </div>
-            <div class="progress-bg"><div class="progress-fill" style="width:${Math.min(pct, 100)}%; background:${barColor};"></div></div>
-          </div>`;
-      }
-      document.getElementById('setBudgetList').innerHTML = budgHtml;
-
-      // Target Goals (Masih dirender juga di Dashboard)
-      let tgtHtml = '';
-      for(let i=1; i<gTarget.length; i++) {
-        const lim = Number(gTarget[i][2]), terkumpul = Number(gTarget[i][3]);
-        const pct = lim>0 ? (terkumpul/lim)*100 : 0;
-        tgtHtml += `
-          <div class="target-item">
-            <div class="target-icon"><i class="fa-solid fa-house"></i></div>
-            <div class="target-info">
-              <div class="target-head"><span>${gTarget[i][1]}</span> <span>Rp ${fmtRp(lim)}</span></div>
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-                <div class="progress-bg" style="width:80%; height:6px;"><div class="progress-fill" style="width:${Math.min(pct,100)}%; background:var(--income-green);"></div></div>
-                <span style="font-size:0.7rem; color:var(--text-main); font-weight:600;">${pct.toFixed(0)}%</span>
-              </div>
-              <div class="target-desc">Target accumulation running.</div>
-            </div>
-          </div>`;
-      }
-      document.getElementById('setGoalList').innerHTML = tgtHtml;
-    }
-
-    // TANTANGAN 3: FUNGSI SUBMIT DINAMIS (Bisa Akun, Budget, Transaksi)
-    async function submitData(jenisForm) {
-      let payload = {};
-      let btnId = ''; let textLama = '';
-
-      if (jenisForm === 'tambahTransaksi') {
-        btnId = 'btnSimpanTrans';
-        payload = {
-          action: 'tambahTransaksi',
-          tanggal: document.getElementById('inpTanggal').value,
-          jenis: document.getElementById('inpJenis').value,
-          kategori: document.getElementById('inpKat').value,
-          akun: document.getElementById('inpAkun').value,
-          nominal: document.getElementById('inpNominal').value,
-          keterangan: document.getElementById('inpKet').value
-        };
-      } else if (jenisForm === 'tambahAkun') {
-        btnId = 'btnSimpanAkun';
-        payload = {
-          action: 'tambahAkun',
-          namaAkun: document.getElementById('newAkunName').value,
-          saldo: document.getElementById('newAkunSaldo').value
-        };
-      } else if (jenisForm === 'tambahBudget') {
-        btnId = 'btnSimpanBudget';
-        payload = {
-          action: 'tambahBudget',
-          namaBudget: document.getElementById('newBudgetName').value,
-          nominal: document.getElementById('newBudgetLimit').value
-        };
-      }
-
-      const btn = document.getElementById(btnId);
-      textLama = btn.innerHTML;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...'; btn.disabled = true;
-      
-      try {
-        await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-        
-        // Reset form berdasarkan jenis
-        if (jenisForm === 'tambahTransaksi') {
-          document.getElementById('inpNominal').value = ''; document.getElementById('inpKet').value = '';
-          navTo('page-dashboard', document.getElementById('nav-dash'));
-        } else if (jenisForm === 'tambahAkun') {
-          document.getElementById('formNewAccount').reset(); toggleForm('formNewAccount');
-        } else if (jenisForm === 'tambahBudget') {
-          document.getElementById('formNewBudget').reset(); toggleForm('formNewBudget');
-        }
-        
-        await muatData(); // Refresh Data UI
-      } catch (e) { alert("Error saving data to Cloud."); }
-      finally { btn.innerHTML = textLama; btn.disabled = false; }
-    }
-  </script>
-</body>
-</html>
+diff --git a/index.html b/index.html
+index 282a443e94046357ee6a35bc5fad5b0f7e6a9b2f..6f857c1bfa32236679a53af5946e6d2cff6cad7b 100644
+--- a/index.html
++++ b/index.html
+@@ -1,89 +1,101 @@
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+   <title>LUNA FINANCE</title>
+   
+   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+ 
+   <style>
+     :root {
+       --bg-dark: #121212;
+       --bg-surface: #1E1E1E;
+       --bg-surface-light: #2A2A2A;
+       --luna-primary: #9BA8DB; 
+       --luna-primary-dark: #2B3253;
++      --neon-cyan: #59F2FF;
++      --neon-pink: #FF74E1;
+       --text-main: #FFFFFF;
+       --text-muted: #888888;
+       --income-green: #4CAF50;
+       --expense-red: #FF8A80;
+       --border-color: rgba(255, 255, 255, 0.08);
+       --font-family: 'Inter', sans-serif;
+     }
+ 
+     * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family); -webkit-tap-highlight-color: transparent; }
+     body { background-color: var(--bg-dark); color: var(--text-main); display: flex; justify-content: center; }
+     .app-container { width: 100%; max-width: 480px; min-height: 100vh; background-color: var(--bg-dark); position: relative; overflow-x: hidden; }
+ 
+     h1, h2, h3 { font-weight: 600; letter-spacing: -0.5px; }
+     .label-caps { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 600; }
+ 
+     /* AUTH SCREEN */
+     #screen-auth { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, #1A1C23 0%, var(--bg-dark) 100%); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; }
+     .auth-logo { width: 80px; height: 80px; background: var(--luna-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 30px; box-shadow: 0 0 40px rgba(155, 168, 219, 0.2);}
+     .auth-title { font-size: 1.8rem; font-weight: 800; letter-spacing: 4px; color: var(--luna-primary); margin-bottom: 5px; }
+     .auth-subtitle { font-size: 0.8rem; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 50px; text-transform: uppercase; }
+     .auth-card { background: var(--bg-surface); padding: 30px; border-radius: 24px; width: 100%; border: 1px solid var(--border-color); }
+     .vault-input-area { background: #151515; border-radius: 12px; padding: 15px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+     .vault-input-area i { color: var(--text-muted); }
+     .vault-input { background: transparent; border: none; color: var(--text-main); width: 100%; outline: none; font-size: 1.2rem; letter-spacing: 5px; font-family: monospace;}
+     .btn-luna { background: var(--luna-primary); color: var(--bg-dark); width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.2s;}
+     .btn-luna-sm { background: var(--luna-primary-dark); color: var(--luna-primary); padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.8rem; cursor: pointer; border: 1px solid var(--luna-primary); }
+ 
+     /* MAIN NAV */
+     #screen-main { display: none; padding-bottom: 90px; }
+-    .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid var(--border-color); margin-bottom: 15px;}
++    .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid var(--border-color); margin-bottom: 15px; background: rgba(18,18,18,0.72); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 12;}
+     .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; letter-spacing: 2px; color: var(--luna-primary);}
+     .nav-brand i { font-size: 1.5rem; }
+     .nav-actions { font-size: 0.95rem; font-weight: 600; color: var(--text-main); letter-spacing: 1px; display: flex; align-items: center; gap: 12px; }
+     .header-date { font-size: 0.65rem; color: var(--text-muted); font-weight: 500; letter-spacing: 0.5px; margin-top: 3px; text-transform: none;}
+     .btn-fs { cursor: pointer; color: var(--text-muted); transition: 0.2s; font-size: 1.2rem; }
+     .btn-fs:hover { color: var(--luna-primary); }
+ 
+     /* PAGES */
+     .page { display: none; padding: 0 24px; animation: fadeIn 0.3s ease; }
+     .page.active { display: block; }
+     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+ 
+     /* DASHBOARD */
+     .net-worth-amount { font-size: 3rem; font-weight: 700; margin: 5px 0 25px 0; color: var(--text-main); }
+     .net-worth-amount span { color: var(--luna-primary); }
+     
+     .card { background: var(--bg-surface); border-radius: 20px; padding: 20px; border: 1px solid var(--border-color); margin-bottom: 20px; }
++    .youth-hero { background: linear-gradient(135deg, rgba(89,242,255,0.16), rgba(255,116,225,0.15), rgba(155,168,219,0.12)); border: 1px solid rgba(89, 242, 255, 0.24); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
++    .hero-head { display:flex; justify-content:space-between; align-items:flex-start; gap: 12px; }
++    .hero-name { font-size: 1.15rem; font-weight: 700; }
++    .hero-sub { font-size: 0.82rem; color: #d4d8ea; margin-top: 6px; line-height: 1.4; }
++    .pill { font-size: 0.7rem; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.12); border-radius: 999px; padding: 6px 12px; color: var(--neon-cyan); white-space: nowrap; }
++    .quick-actions { margin-top: 16px; display:flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
++    .quick-btn { border: 1px solid rgba(255,255,255,0.14); background: rgba(0,0,0,0.3); color: #fff; border-radius: 12px; padding: 11px 14px; font-size: 0.77rem; font-weight: 600; white-space: nowrap; cursor: pointer; }
++    .pulse-card { background: linear-gradient(145deg, #191829, #1f2335); border: 1px solid rgba(155,168,219,0.25); }
++    .pulse-range { width: 100%; accent-color: var(--luna-primary); margin: 10px 0 4px; }
++    .pulse-read { font-size: 0.78rem; color: var(--text-muted); }
+     .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+     .summary-val { font-size: 1.4rem; font-weight: 700; margin-top: 5px; }
+     .text-in { color: var(--income-green); }
+ 
+     .dash-acc-card { background: var(--bg-surface-light); border-radius: 16px; padding: 15px 20px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color);}
+     .dash-acc-card h4 { font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+     .dash-acc-card p { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+     .dash-acc-val { font-size: 1.1rem; font-weight: 700; color: var(--luna-primary); }
+ 
+     /* FIX: HUTANG CARD NUMPUK */
+     .hutang-card { background: linear-gradient(135deg, #2b1414, #1a0a0a); border-radius: 16px; padding: 20px; border: 1px solid rgba(255, 138, 128, 0.15); margin-bottom: 20px; }
+     .hutang-header { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 15px; gap: 6px; }
+     .hutang-title { font-weight: 600; font-size: 0.8rem; color: var(--expense-red); text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px;}
+     .hutang-sisa { font-size: 1.6rem; font-weight: 700; color: #fff; line-height: 1.1; }
+     .progress-bg { background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden; }
+     .progress-fill { height: 100%; background: var(--expense-red); transition: width 0.5s; }
+ 
+     .target-item { background: var(--bg-surface-light); border-radius: 16px; padding: 15px; display: flex; gap: 15px; margin-bottom: 15px;}
+     .target-icon { width: 60px; height: 60px; background: #111; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-muted);}
+     .target-info { flex: 1; }
+     .target-head { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.95rem; margin-bottom: 10px;}
+     .target-head span:last-child { color: var(--income-green); }
+ 
+     .section-header { display: flex; justify-content: space-between; align-items: center; margin: 30px 0 15px 0; }
+     .link-primary { color: var(--luna-primary); font-size: 0.8rem; font-weight: 600; letter-spacing: 1px; text-decoration: none; text-transform: uppercase; }
+@@ -94,59 +106,64 @@
+     .act-icon { width: 40px; height: 40px; background: var(--bg-surface-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 1.1rem; }
+     .act-info h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 3px; }
+     .act-info p { font-size: 0.75rem; color: var(--text-muted); }
+     .act-amount { font-weight: 600; font-size: 0.95rem; }
+ 
+     .insight-card { background: linear-gradient(135deg, var(--bg-surface) 0%, #1a1a2e 100%); border-left: 3px solid var(--luna-primary); margin-top: 20px;}
+     .insight-card p { font-size: 0.9rem; color: var(--text-muted); margin: 10px 0 0 0; line-height: 1.5; }
+ 
+     /* INPUT PAGE */
+     .page-header { text-align: center; margin-bottom: 30px; position: relative;}
+     .page-title { font-size: 1.8rem; font-weight: 700; margin-top: 5px; }
+     .page-title::after { content:''; display:block; width: 40px; height: 3px; background: var(--luna-primary); margin: 10px auto 0 auto; border-radius: 2px;}
+     
+     .amount-input-area { margin-bottom: 30px; display: flex; align-items: baseline; gap: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;}
+     .currency { font-size: 1.2rem; font-weight: 600; color: var(--luna-primary); }
+     .amount-input { background: transparent; border: none; color: var(--text-main); font-size: 3.5rem; font-weight: 700; width: 100%; outline: none; }
+ 
+     .form-card { background: var(--bg-surface); padding: 5px 20px; border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 15px; }
+     .form-group { padding: 15px 0; border-bottom: 1px solid var(--border-color); position: relative;}
+     .form-group:last-child { border-bottom: none; }
+     .form-group label { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; }
+     .input-row { display: flex; align-items: center; gap: 15px; }
+     .input-row i { color: var(--income-green); width: 20px; text-align: center; }
+     .input-row select, .input-row input { background: transparent; border: none; color: var(--text-main); font-size: 1rem; font-weight: 500; width: 100%; outline: none; appearance: none; }
+     .chevron-down { position: absolute; right: 0; top: 50%; color: var(--text-muted); pointer-events: none;}
++    .btn-ghost { margin-top: 12px; width: 100%; background: transparent; border: 1px dashed rgba(155,168,219,0.55); color: var(--luna-primary); border-radius: 12px; padding: 11px; font-weight: 600; cursor: pointer; }
+ 
+     /* HISTORY PAGE */
+     .search-bar { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+     .search-bar input { background: transparent; border: none; color: var(--text-main); font-size: 0.95rem; width: 100%; outline: none; }
+     .filter-chips { display: flex; gap: 10px; margin-bottom: 30px; overflow-x: auto; padding-bottom: 5px;}
+     .chip { background: var(--bg-surface); border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); cursor: pointer; white-space: nowrap;}
+     .chip.active { background: var(--luna-primary); color: var(--bg-dark); border-color: var(--luna-primary); }
+ 
+     .history-group-title { font-size: 1rem; font-weight: 500; color: var(--text-main); margin: 25px 0 15px 0; }
++    .history-stats { display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
++    .stat-card { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 14px; padding: 12px; }
++    .stat-card p { font-size: 0.66rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
++    .stat-card h3 { font-size: 1.05rem; margin-top: 6px; }
+     .history-card { background: var(--bg-surface); border-radius: 20px; padding: 5px 20px; border: 1px solid var(--border-color); }
+     .history-card .activity-item { padding: 15px 0; border-bottom: 1px solid var(--border-color); }
+     .history-card .activity-item:last-child { border-bottom: none; }
+     .status-text { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; text-align: right; margin-top: 4px;}
+ 
+     /* SETTINGS PAGE & FORMS */
+     .settings-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 30px; }
+     .control-card { background: var(--bg-surface); border-radius: 20px; padding: 20px; border: 1px solid var(--border-color); margin-bottom: 20px; position: relative;}
+     .control-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+     .control-icon { font-size: 2rem; color: var(--bg-surface-light); position: absolute; right: 20px; top: 20px; opacity: 0.5;}
+     
+     .acc-item { background: var(--bg-surface-light); border-radius: 12px; padding: 15px; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
+     .acc-item i { background: #333; padding: 10px; border-radius: 8px; color: var(--luna-primary); }
+     
+     .frontier-item { margin-bottom: 20px; }
+     .frontier-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+     .frontier-title { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 0.9rem; }
+     .frontier-title i { background: var(--bg-surface-light); padding: 8px; border-radius: 8px; color: var(--text-muted); }
+     
+     /* SETTINGS HIDDEN FORMS */
+     .inline-form { background: var(--bg-surface-light); border: 1px solid var(--luna-primary-dark); padding: 15px; border-radius: 12px; margin-bottom: 15px; display: none; }
+     .inline-form.active { display: block; animation: fadeIn 0.3s ease;}
+     .inline-input { width: 100%; background: var(--bg-dark); border: 1px solid var(--border-color); color: #fff; padding: 10px; border-radius: 8px; margin-bottom: 10px; outline: none; }
+ 
+     /* BOTTOM NAV */
+@@ -173,122 +190,151 @@
+           <i class="fa-solid fa-lock"></i>
+           <input type="password" id="vaultPin" class="vault-input" placeholder="••••••">
+         </div>
+         <p id="authError" style="color: var(--expense-red); font-size: 0.8rem; display: none; margin-top: -10px;">
+           <i class="fa-solid fa-circle-exclamation"></i> Invalid credentials.
+         </p>
+         <button class="btn-luna" onclick="login()">Masuk <i class="fa-solid fa-arrow-right"></i></button>
+       </div>
+     </div>
+ 
+     <div id="screen-main">
+       
+       <div class="top-nav">
+         <div class="nav-brand">
+           <div><i class="fa-solid fa-cloud"></i> LUNA <div class="header-date" id="headerDate">Memuat tanggal...</div></div>
+         </div>
+         <div class="nav-actions">
+           <span>Umar Taufik</span>
+           <i class="fa-solid fa-expand btn-fs" id="fs-icon" onclick="toggleFullScreen()" title="Full Screen"></i>
+         </div>
+       </div>
+ 
+       <div id="page-dashboard" class="page active">
+         <div class="label-caps">Total Net Worth</div>
+         <div class="net-worth-amount" id="netWorth">IDR 0</div>
++        
++        <div class="card youth-hero">
++          <div class="hero-head">
++            <div>
++              <div class="hero-name" id="welcomeName">Halo, Umar 👋</div>
++              <div class="hero-sub" id="welcomeSub">Yuk bikin cashflow hari ini tetap rapi dan tetap chill.</div>
++            </div>
++            <div class="pill" id="streakBadge">Streak 0 hari</div>
++          </div>
++          <div class="quick-actions">
++            <button class="quick-btn" onclick="setQuickAmount(25000)">+ Jajan 25k</button>
++            <button class="quick-btn" onclick="setQuickAmount(100000)">+ Topup 100k</button>
++            <button class="quick-btn" onclick="setQuickAmount(500000)">+ Nabung 500k</button>
++            <button class="quick-btn" onclick="runWeeklyChallenge()">🎯 Surprise challenge</button>
++          </div>
++        </div>
+ 
+         <div class="card">
+           <div style="display:flex; justify-content:space-between; align-items:center;">
+             <div class="label-caps" style="color:#fff;">Monthly Summary</div>
+             <i class="fa-solid fa-chart-simple" style="color:var(--luna-primary);"></i>
+           </div>
+           <div class="summary-grid">
+             <div><div class="label-caps">Income</div><div class="summary-val text-in" id="sumIncome">+IDR 0</div></div>
+             <div><div class="label-caps">Expenses</div><div class="summary-val" id="sumExpense">IDR 0</div></div>
+           </div>
+         </div>
+ 
+         <div class="section-header"><div class="label-caps" style="color:#fff;">Liquidity Sources</div></div>
+         <div id="dashAkunList"></div>
+         <div id="dashHutangList" style="margin-top: 15px;"></div>
+ 
+         <div class="label-caps" style="color:#fff; font-size:0.85rem; margin-top:30px; display:flex; align-items:center; gap:10px;">
+           <i class="fa-solid fa-circle-star" style="color:var(--income-green); font-size:1.2rem;"></i> Financial Targets
+         </div>
+         <p style="font-size:0.75rem; color:var(--text-muted); margin:5px 0 15px 0; margin-left: 28px;">Long-range goals for capital accumulation.</p>
+         <div id="setGoalList"></div>
+ 
+         <div class="section-header">
+           <div class="label-caps" style="color:#fff;">Recent Activity</div>
+           <a href="#" class="link-primary" onclick="navTo('page-history', document.getElementById('nav-hist'))">View All</a>
+         </div>
+         <div class="card activity-list" id="dashActivity"></div>
+ 
+         <div class="card insight-card">
+           <div class="label-caps" style="color:#fff;">Smart Insight</div>
+           <p>Nasihat Harian: <br><span style="color:var(--luna-primary); font-style:italic;" id="nasihatHarian">Memuat...</span></p>
+         </div>
++
++        <div class="card pulse-card">
++          <div class="label-caps" style="color:#fff;">Mood Spending Check</div>
++          <p style="font-size:0.83rem; color:#d5d7e3; margin-top:8px;">Geser level godaan belanja hari ini biar kamu lebih aware sebelum checkout.</p>
++          <input type="range" min="0" max="100" value="35" class="pulse-range" id="spendingMood" oninput="updateMoodText()">
++          <div class="pulse-read" id="moodText">Mode aman. Lanjut, tapi tetap sadar limit.</div>
++        </div>
+       </div>
+ 
+       <div id="page-input" class="page">
+         <div class="page-header">
+           <div class="label-caps" style="color:var(--income-green);">Celestial Ledger</div>
+           <h1 class="page-title">Record Entry</h1>
+         </div>
+         <div class="label-caps" style="margin-bottom: 10px;">Total Amount</div>
+         <div class="amount-input-area">
+           <span class="currency">IDR</span><input type="number" id="inpNominal" class="amount-input" placeholder="0">
+         </div>
+ 
+         <form id="formInput" onsubmit="event.preventDefault(); submitData('tambahTransaksi');">
+           <div class="form-card">
+             <div class="form-group">
+               <label>Jenis</label>
+               <div class="input-row">
+                 <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                 <select id="inpJenis" onchange="updateKatDropdown()"><option>Pengeluaran</option><option>Pemasukan</option></select>
+                 <i class="fa-solid fa-chevron-down chevron-down"></i>
+               </div>
+             </div>
+             <div class="form-group"><label>Category</label><div class="input-row"><i class="fa-solid fa-layer-group"></i><select id="inpKat"></select><i class="fa-solid fa-chevron-down chevron-down"></i></div></div>
+             <div class="form-group"><label>Account</label><div class="input-row"><i class="fa-solid fa-wallet"></i><select id="inpAkun"></select><i class="fa-solid fa-chevron-down chevron-down"></i></div></div>
+           </div>
+           <div class="form-card"><div class="form-group"><label>Effective Date</label><div class="input-row"><i class="fa-regular fa-calendar"></i><input type="date" id="inpTanggal"></div></div></div>
+           <div class="form-card"><div class="form-group"><label>Reference Note</label><div class="input-row"><i class="fa-solid fa-pen-to-square" style="color:var(--expense-red);"></i><input type="text" id="inpKet" placeholder="Entry missing note..."></div></div></div>
++          <button type="button" class="btn-ghost" onclick="generateSmartNote()"><i class="fa-solid fa-wand-magic-sparkles"></i> Buatin catatan otomatis</button>
+           <button type="submit" class="btn-luna" id="btnSimpanTrans"><i class="fa-solid fa-floppy-disk"></i> Simpan Transaksi</button>
+         </form>
+       </div>
+ 
+       <div id="page-history" class="page">
+         <h1 style="font-size: 2rem; margin-bottom: 5px;">History</h1>
+         <div class="label-caps" style="margin-bottom: 25px;">Transaction Management</div>
+         <div class="search-bar"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="searchHistory" placeholder="Search transactions..." onkeyup="renderHistory()"></div>
+         <div class="filter-chips">
+           <div class="chip active" onclick="setFilter('All', this)">All Time</div>
+           <div class="chip" onclick="setFilter('Income', this)">Income</div>
+           <div class="chip" onclick="setFilter('Expenses', this)">Expenses</div>
+         </div>
++        <div class="history-stats">
++          <div class="stat-card"><p>Total Item</p><h3 id="statTotal">0</h3></div>
++          <div class="stat-card"><p>Pemasukan</p><h3 id="statIncome">Rp 0</h3></div>
++          <div class="stat-card"><p>Pengeluaran</p><h3 id="statExpense">Rp 0</h3></div>
++        </div>
+         <div id="historyContainer"></div>
+       </div>
+ 
+       <div id="page-settings" class="page">
+         <div class="label-caps" style="color:var(--luna-primary); margin-bottom: 5px;">System Configuration</div>
+         <h1 style="font-size: 2rem; margin-bottom: 15px;">Control Layer</h1>
+         <p class="settings-desc">Monitoring & adding parameters for your financial system.</p>
+ 
+         <div class="control-card">
+           <i class="fa-solid fa-building-columns control-icon"></i>
+           <div class="control-header">
+             <div class="label-caps" style="color:#fff; font-size:0.85rem;">Account Management</div>
+             <button class="btn-luna-sm" onclick="toggleForm('formNewAccount')">+ Add</button>
+           </div>
+           
+           <form id="formNewAccount" class="inline-form" onsubmit="event.preventDefault(); submitData('tambahAkun');">
+             <label class="label-caps">Nama Akun Baru</label>
+             <input type="text" id="newAkunName" class="inline-input" required placeholder="Contoh: BCA">
+             <label class="label-caps">Saldo Awal (Rp)</label>
+             <input type="number" id="newAkunSaldo" class="inline-input" required placeholder="0">
+             <button type="submit" class="btn-luna btn-luna-sm" id="btnSimpanAkun" style="width:100%; margin-top:5px;">Simpan Akun</button>
+           </form>
+ 
+           <div id="setAkunList"></div>
+         </div>
+@@ -333,80 +379,115 @@
+       <div class="bottom-nav">
+         <div class="nav-item active" id="nav-dash" onclick="navTo('page-dashboard', this)"><i class="fa-solid fa-border-all"></i> Dashboard</div>
+         <div class="nav-item" id="nav-inp" onclick="navTo('page-input', this)"><i class="fa-solid fa-circle-plus"></i> Input</div>
+         <div class="nav-item" id="nav-hist" onclick="navTo('page-history', this)"><i class="fa-solid fa-clock-rotate-left"></i> History</div>
+         <div class="nav-item" id="nav-set" onclick="navTo('page-settings', this)"><i class="fa-solid fa-gear"></i> Settings</div>
+       </div>
+ 
+     </div>
+   </div>
+ 
+   <script>
+     // --- GANTI URL API DI BAWAH INI ---
+     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxEYyeciYAFZ3Jo2vMUdTObOA0bNi4Eqd7jMdzlIRXsf_WMtnFeC64kBd-8bgJ66I5mjA/exec'; 
+     
+     // Sistem PIN LocalStorage
+     let myPin = localStorage.getItem('luna_pin') || "123456";
+ 
+     const fmtRp = (num) => new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(Math.abs(num));
+     const tglSistem = new Date().toISOString().split('T')[0];
+     document.getElementById('inpTanggal').value = tglSistem;
+     document.getElementById('headerDate').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+ 
+     let gTransaksi = [], gAkun = [], gBudget = [], gTarget = [];
+     let curFilter = 'All';
+     let globalBudgPakai = {}; // Variabel global buat nyimpen data pemakaian budget biar bisa dibaca di Settings
++    let saveStreak = Number(localStorage.getItem('luna_streak') || '0');
+ 
+     const nasihat = ["Hindari sifat malas dan kikir.", "Buat uang bekerja untukmu, bukan sebaliknya.", "Investasi terbaik ada pada dirimu."];
+     document.getElementById('nasihatHarian').innerText = nasihat[new Date().getDate() % nasihat.length];
+ 
++    function updateWelcomeMessage() {
++      const jam = new Date().getHours();
++      const sapaan = jam < 11 ? 'Pagi produktif' : jam < 15 ? 'Siang gaspol' : jam < 19 ? 'Sore santai' : 'Malam fokus';
++      document.getElementById('welcomeName').innerText = `${sapaan}, Umar 👋`;
++      document.getElementById('welcomeSub').innerText = 'UI baru ini biar tracking keuangan lebih ringan, cepat, dan tetap keren.';
++      document.getElementById('streakBadge').innerText = `Streak ${saveStreak} hari`;
++    }
++
++    function updateMoodText() {
++      const val = Number(document.getElementById('spendingMood').value);
++      let txt = 'Mode aman. Lanjut, tapi tetap sadar limit.';
++      if(val > 70) txt = 'Godaan tinggi. Tunda 24 jam sebelum beli biar nggak impulsif.';
++      else if(val > 40) txt = 'Lumayan rawan. Prioritaskan kebutuhan dulu, wishlist belakangan.';
++      document.getElementById('moodText').innerText = txt;
++    }
++
++    function setQuickAmount(amount) {
++      navTo('page-input', document.getElementById('nav-inp'));
++      document.getElementById('inpNominal').value = amount;
++      document.getElementById('inpNominal').focus();
++    }
++
++    function runWeeklyChallenge() {
++      const challenge = [
++        'Hari ini no-buy challenge untuk item non-prioritas.',
++        'Coba sisihkan 5% pemasukan terakhir ke tabungan.',
++        'Audit 1 langganan digital yang jarang dipakai.',
++        'Catat semua pengeluaran kecil sampai malam ini.'
++      ];
++      const teks = challenge[new Date().getDay() % challenge.length];
++      document.getElementById('nasihatHarian').innerText = teks;
++    }
++
+     // TANTANGAN 4: FULLSCREEN JAGO
+     function toggleFullScreen() {
+       const doc = window.document;
+       const docEl = doc.documentElement;
+       const iconFs = document.getElementById('fs-icon');
+ 
+       const requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+       const cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+ 
+       if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+         if(requestFullScreen) { 
+           requestFullScreen.call(docEl); 
+           iconFs.classList.replace('fa-expand', 'fa-compress');
+         } else { alert("Browser HP lu nggak support Fullscreen dari web ini bro."); }
+       } else {
+         if(cancelFullScreen) { 
+           cancelFullScreen.call(doc); 
+           iconFs.classList.replace('fa-compress', 'fa-expand');
+         }
+       }
+     }
+ 
+     function login() {
+       if (document.getElementById('vaultPin').value === myPin) {
+         document.getElementById('screen-auth').style.display = 'none';
+         document.getElementById('screen-main').style.display = 'block';
++        updateWelcomeMessage();
+         muatData();
+       } else {
+         document.getElementById('authError').style.display = 'block';
+       }
+     }
+ 
+     // TANTANGAN 3: CHANGE PIN LOGIC
+     function ubahPIN() {
+       const oldP = document.getElementById('oldPin').value;
+       const newP = document.getElementById('newPin').value;
+       if(oldP === myPin) {
+         localStorage.setItem('luna_pin', newP);
+         myPin = newP;
+         alert("Vault Access Key berhasil diperbarui!");
+         document.getElementById('formChangePin').reset();
+         document.getElementById('formChangePin').classList.remove('active');
+       } else {
+         alert("Access denied: PIN Lama salah!");
+       }
+     }
+ 
+     function toggleForm(id) {
+       document.getElementById(id).classList.toggle('active');
+     }
+ 
+@@ -489,73 +570,79 @@
+ 
+       // TANTANGAN 1: HUTANG CARD TUMPUK (Fix: Flex Column & Line Height)
+       let dashHutangHtml = '';
+       for(let i=1; i<gBudget.length; i++) {
+         const kat = gBudget[i][1], lim = Number(gBudget[i][2]);
+         if(kat.toLowerCase().includes('hutang')) {
+           const pak = globalBudgPakai[kat]||0;
+           const pct = lim > 0 ? (pak/lim)*100 : 0;
+           dashHutangHtml += `
+             <div class="hutang-card">
+               <div class="hutang-header">
+                 <div class="hutang-title"><i class="fa-solid fa-triangle-exclamation"></i> Target Pembayaran: ${kat}</div>
+                 <div class="hutang-sisa">Rp ${fmtRp(Math.max(lim - pak, 0))}</div>
+               </div>
+               <div style="font-size:0.7rem; color:var(--text-muted); margin-bottom:8px;">Sisa target berjalan</div>
+               <div class="progress-bg"><div class="progress-fill" style="width:${Math.min(pct, 100)}%;"></div></div>
+             </div>`;
+         }
+       }
+       document.getElementById('dashHutangList').innerHTML = dashHutangHtml;
+     }
+ 
+     function renderHistory() {
+       const kw = document.getElementById('searchHistory').value.toLowerCase();
+       let html = ''; let groups = {};
++      let total = 0, totalIn = 0, totalOut = 0;
+       
+       for(let i=gTransaksi.length-1; i>=1; i--) {
+         const t = gTransaksi[i];
+         if(curFilter === 'Income' && t[2] !== 'Pemasukan') continue;
+         if(curFilter === 'Expenses' && t[2] !== 'Pengeluaran') continue;
+         if(kw && !(t[6]+" "+t[4]+" "+t[5]).toLowerCase().includes(kw)) continue;
++        total++;
++        if(t[2] === 'Pemasukan') totalIn += Number(t[3]); else totalOut += Number(t[3]);
+ 
+         const dStr = new Date(t[1]).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'});
+         if(!groups[dStr]) groups[dStr] = [];
+         groups[dStr].push(t);
+       }
+ 
+       for(const [date, items] of Object.entries(groups)) {
+         html += `<div class="history-group-title">${date}</div><div class="history-card">`;
+         items.forEach(t => {
+           const isInc = t[2] === 'Pemasukan';
+           const icon = isInc ? 'fa-wallet' : 'fa-cart-shopping';
+           const col = isInc ? 'var(--income-green)' : 'var(--expense-red)';
+           html += `<div class="activity-item" style="display:flex; justify-content:space-between; align-items:center;"><div class="act-left"><div class="act-icon"><i class="fa-solid ${icon}"></i></div><div class="act-info"><h4>${t[6]}</h4><p>${t[4]} • ${t[5]}</p></div></div><div style="text-align:right;"><div class="act-amount" style="color:${col}">${isInc?'+':'-'} ${fmtRp(t[3])}</div><div class="status-text" style="color:${isInc?'var(--income-green)':'var(--text-muted)'}">${isInc?'CLEARED':'PENDING'}</div></div></div>`;
+         });
+         html += `</div>`;
+       }
+       document.getElementById('historyContainer').innerHTML = html || '<p style="color:#888; text-align:center; padding:20px;">No records found.</p>';
++      document.getElementById('statTotal').innerText = total;
++      document.getElementById('statIncome').innerText = `Rp ${fmtRp(totalIn)}`;
++      document.getElementById('statExpense').innerText = `Rp ${fmtRp(totalOut)}`;
+     }
+ 
+     function setFilter(f, el) { curFilter = f; document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); el.classList.add('active'); renderHistory(); }
+ 
+     function renderSettings() {
+       // Akun Render
+       let accHtml = '';
+       for(let i=1; i<gAkun.length; i++) {
+         accHtml += `<div class="acc-item"><i class="fa-solid fa-wallet"></i><div><div style="font-weight:600; font-size:0.9rem;">${gAkun[i][1]}</div><div style="font-size:0.7rem; color:var(--text-muted);">Linked Account</div></div></div>`;
+       }
+       document.getElementById('setAkunList').innerHTML = accHtml;
+ 
+       // TANTANGAN 2: BUDGET (FRONTIER) BAR BERGERAK SESUAI DATA
+       let budgHtml = '';
+       for(let i=1; i<gBudget.length; i++) {
+         const kat = gBudget[i][1];
+         if(kat.toLowerCase().includes('hutang')) continue; 
+         
+         const lim = Number(gBudget[i][2]);
+         const pak = globalBudgPakai[kat] || 0;
+         const pct = lim > 0 ? (pak/lim)*100 : 0;
+         
+         // Warna Dinamis
+         let barColor = 'var(--luna-primary)';
+         let statusText = 'Active'; let statusColor = 'var(--income-green)';
+@@ -616,40 +703,56 @@
+       } else if (jenisForm === 'tambahAkun') {
+         btnId = 'btnSimpanAkun';
+         payload = {
+           action: 'tambahAkun',
+           namaAkun: document.getElementById('newAkunName').value,
+           saldo: document.getElementById('newAkunSaldo').value
+         };
+       } else if (jenisForm === 'tambahBudget') {
+         btnId = 'btnSimpanBudget';
+         payload = {
+           action: 'tambahBudget',
+           namaBudget: document.getElementById('newBudgetName').value,
+           nominal: document.getElementById('newBudgetLimit').value
+         };
+       }
+ 
+       const btn = document.getElementById(btnId);
+       textLama = btn.innerHTML;
+       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...'; btn.disabled = true;
+       
+       try {
+         await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+         
+         // Reset form berdasarkan jenis
+         if (jenisForm === 'tambahTransaksi') {
++          const today = new Date().toISOString().split('T')[0];
++          const lastDate = localStorage.getItem('luna_last_txn_date');
++          if(lastDate !== today) {
++            saveStreak += 1;
++            localStorage.setItem('luna_streak', String(saveStreak));
++            localStorage.setItem('luna_last_txn_date', today);
++            updateWelcomeMessage();
++          }
+           document.getElementById('inpNominal').value = ''; document.getElementById('inpKet').value = '';
+           navTo('page-dashboard', document.getElementById('nav-dash'));
+         } else if (jenisForm === 'tambahAkun') {
+           document.getElementById('formNewAccount').reset(); toggleForm('formNewAccount');
+         } else if (jenisForm === 'tambahBudget') {
+           document.getElementById('formNewBudget').reset(); toggleForm('formNewBudget');
+         }
+         
+         await muatData(); // Refresh Data UI
+       } catch (e) { alert("Error saving data to Cloud."); }
+       finally { btn.innerHTML = textLama; btn.disabled = false; }
+     }
++
++    function generateSmartNote() {
++      const jenis = document.getElementById('inpJenis').value;
++      const kat = document.getElementById('inpKat').value || 'Umum';
++      const nominal = Number(document.getElementById('inpNominal').value || 0);
++      const gaya = nominal >= 500000 ? 'transaksi besar, cek lagi urgensi' : 'transaksi harian';
++      document.getElementById('inpKet').value = `${jenis} ${kat} • ${gaya}`;
++    }
+   </script>
+ </body>
+ </html>
